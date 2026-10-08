@@ -51,6 +51,7 @@ export const useStore = create(
       isWishlistOpen: false,
       isCheckoutOpen: false,
       isAuthOpen: false,
+      isAccountOpen: false,
       quickViewProduct: null,
       appliedPromo: null,
       toasts: [],
@@ -81,6 +82,7 @@ export const useStore = create(
       setIsWishlistOpen: (open) => set({ isWishlistOpen: open }),
       setIsCheckoutOpen: (open) => set({ isCheckoutOpen: open }),
       setIsAuthOpen: (open) => set({ isAuthOpen: open }),
+      setIsAccountOpen: (open) => set({ isAccountOpen: open }),
       setQuickViewProduct: (product) => set({ quickViewProduct: product }),
 
       // -------------------------------------------------------------

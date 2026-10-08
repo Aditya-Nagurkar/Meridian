@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Lock, Mail, User, Phone, Sparkles, CheckCircle2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Modal } from "../common/Modal"
@@ -10,8 +10,15 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs"
 import mockUsers from "../../data/users.json"
 
 export function AuthModal() {
-  const { isAuthOpen, setIsAuthOpen, login, register } = useStore()
+  const { isAuthOpen, setIsAuthOpen, setIsAccountOpen, user, login, register } = useStore()
   const [activeTab, setActiveTab] = useState("signin")
+
+  useEffect(() => {
+    if (user && isAuthOpen) {
+      setIsAuthOpen(false)
+      setIsAccountOpen(true)
+    }
+  }, [user, isAuthOpen, setIsAuthOpen, setIsAccountOpen])
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("")

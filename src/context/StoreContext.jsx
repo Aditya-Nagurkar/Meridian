@@ -79,6 +79,8 @@ export function useStore() {
     setIsCheckoutOpen: store.setIsCheckoutOpen,
     isAuthOpen: store.isAuthOpen,
     setIsAuthOpen: store.setIsAuthOpen,
+    isAccountOpen: store.isAccountOpen,
+    setIsAccountOpen: store.setIsAccountOpen,
     quickViewProduct: store.quickViewProduct,
     setQuickViewProduct: store.setQuickViewProduct,
 

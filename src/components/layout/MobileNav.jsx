@@ -4,7 +4,15 @@ import { useStore } from "../../context/StoreContext"
 import { cn } from "../../lib/utils"
 
 export function MobileNav({ onScrollToCatalog }) {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, setIsAuthOpen, user } = useStore()
+  const {
+    cartCount,
+    wishlistCount,
+    setIsCartOpen,
+    setIsWishlistOpen,
+    setIsAuthOpen,
+    setIsAccountOpen,
+    user,
+  } = useStore()
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card/90 backdrop-blur-lg border-t border-border px-4 py-2 sm:hidden safe-area-pb">
@@ -58,7 +66,7 @@ export function MobileNav({ onScrollToCatalog }) {
         </button>
 
         <button
-          onClick={() => setIsAuthOpen(true)}
+          onClick={() => (user ? setIsAccountOpen(true) : setIsAuthOpen(true))}
           className="relative flex flex-col items-center gap-1 p-1 text-muted-foreground hover:text-foreground transition-colors"
         >
           {user ? (

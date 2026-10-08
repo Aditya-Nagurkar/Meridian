@@ -13,6 +13,7 @@ import { CartDrawer } from "./components/cart/CartDrawer"
 import { WishlistDrawer } from "./components/wishlist/WishlistDrawer"
 import { CheckoutModal } from "./components/checkout/CheckoutModal"
 import { AuthModal } from "./components/auth/AuthModal"
+import { AccountModal } from "./components/auth/AccountModal"
 import { MobileNav } from "./components/layout/MobileNav"
 import { Footer } from "./components/layout/Footer"
 import { ToastContainer } from "./components/common/Toast"
@@ -103,6 +104,7 @@ function StoreContent() {
       <QuickViewModal />
       <CheckoutModal />
       <AuthModal />
+      <AccountModal />
       <ToastContainer />
       <MobileNav onScrollToCatalog={scrollToCatalog} />
     </div>

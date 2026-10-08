@@ -5,7 +5,7 @@ import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 
 export function UserMenu() {
-  const { user, logout, setIsAuthOpen, orders } = useStore()
+  const { user, logout, setIsAuthOpen, setIsAccountOpen, orders } = useStore()
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef(null)
 
@@ -60,11 +60,11 @@ export function UserMenu() {
         <ChevronDown className="hidden sm:inline h-3 w-3 text-muted-foreground" />
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - 100% Solid & High-Contrast */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-border bg-popover/95 backdrop-blur-xl p-3 shadow-2xl z-50 animate-in fade-in-50 zoom-in-95 duration-150">
+        <div className="absolute right-0 mt-2 w-72 rounded-2xl border border-border bg-card text-card-foreground shadow-2xl z-50 p-3.5 animate-in fade-in-50 zoom-in-95 duration-150 ring-1 ring-border/50">
           {/* User Header */}
-          <div className="flex items-center gap-2.5 pb-3 border-b border-border/60">
+          <div className="flex items-center gap-3 pb-3 border-b border-border/80">
             {user.avatar ? (
               <img
                 src={user.avatar}
@@ -79,18 +79,18 @@ export function UserMenu() {
             <div className="min-w-0 flex-1">
               <h4 className="text-xs font-bold text-foreground truncate">{user.name}</h4>
               <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
-              <Badge variant="accent" className="mt-1 text-[9px] px-1.5 py-0">
+              <Badge variant="accent" className="mt-1 text-[9px] px-2 py-0.5">
                 {user.tier || "Member"}
               </Badge>
             </div>
           </div>
 
           {/* Details & Stats */}
-          <div className="py-2.5 space-y-2 text-xs text-muted-foreground border-b border-border/60">
+          <div className="py-3 space-y-2.5 text-xs text-muted-foreground border-b border-border/80">
             {user.rewardPoints !== undefined && (
               <div className="flex items-center justify-between text-[11px]">
                 <span className="flex items-center gap-1.5">
-                  <Award className="h-3.5 w-3.5 text-primary" />
+                  <Award className="h-3.5 w-3.5 text-amber-500" />
                   Reward Points:
                 </span>
                 <span className="font-bold text-foreground font-mono">
@@ -110,7 +110,7 @@ export function UserMenu() {
             </div>
 
             {user.defaultAddress && (
-              <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground pt-1">
+              <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground pt-0.5">
                 <MapPin className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
                 <span className="truncate">
                   {user.defaultAddress.city}, {user.defaultAddress.state}
@@ -119,14 +119,24 @@ export function UserMenu() {
             )}
           </div>
 
-          {/* Sign Out Button */}
-          <div className="pt-2">
+          {/* Action Buttons */}
+          <div className="pt-2.5 space-y-1.5">
+            <button
+              onClick={() => {
+                setIsAccountOpen(true)
+                setIsOpen(false)
+              }}
+              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-foreground hover:bg-muted transition-colors border border-border/60"
+            >
+              <span>View Account Details</span>
+            </button>
+
             <button
               onClick={() => {
                 logout()
                 setIsOpen(false)
               }}
-              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors"
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors"
             >
               <LogOut className="h-3.5 w-3.5" />
               <span>Sign Out</span>
