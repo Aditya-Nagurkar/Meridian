@@ -1,0 +1,62 @@
+[
+  {
+    "id": "usr-1",
+    "name": "Aditya Nagurkar",
+    "email": "aditya@meridian.in",
+    "password": "password123",
+    "role": "VIP Member",
+    "tier": "Meridian Gold",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
+    "phone": "+91 98201 12345",
+    "memberSince": "Jan 2025",
+    "rewardPoints": 1450,
+    "defaultAddress": {
+      "fullName": "Aditya Nagurkar",
+      "phone": "+91 98201 12345",
+      "street": "402, High Street Residences, Dr. E Moses Rd, Worli",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "pincode": "400018"
+    }
+  },
+  {
+    "id": "usr-2",
+    "name": "Priya Sharma",
+    "email": "demo@meridian.in",
+    "password": "password123",
+    "role": "Elite Member",
+    "tier": "Meridian Elite",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
+    "phone": "+91 98450 67890",
+    "memberSince": "Mar 2025",
+    "rewardPoints": 890,
+    "defaultAddress": {
+      "fullName": "Priya Sharma",
+      "phone": "+91 98450 67890",
+      "street": "12, Indiranagar 100ft Road, HAL 2nd Stage",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "pincode": "560038"
+    }
+  },
+  {
+    "id": "usr-3",
+    "name": "Rahul Verma",
+    "email": "rahul@meridian.in",
+    "password": "password123",
+    "role": "Member",
+    "tier": "Meridian Classic",
+    "avatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=200&q=80",
+    "phone": "+91 99100 45678",
+    "memberSince": "Jun 2025",
+    "rewardPoints": 320,
+    "defaultAddress": {
+      "fullName": "Rahul Verma",
+      "phone": "+91 99100 45678",
+      "street": "B-14, Vasant Vihar, Poorvi Marg",
+      "city": "New Delhi",
+      "state": "Delhi",
+      "pincode": "110057"
+    }
+  }
+]

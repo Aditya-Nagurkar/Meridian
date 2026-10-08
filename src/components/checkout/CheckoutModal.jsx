@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import confetti from "canvas-confetti"
 import { CheckCircle2, CreditCard, ShieldCheck, Truck, ArrowRight, Lock, Copy, Check, Sparkles, Smartphone, Banknote, Building2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
@@ -19,6 +19,7 @@ export function CheckoutModal() {
     total,
     completeOrder,
     appliedPromo,
+    user,
   } = useStore()
 
   // Form Fields customized for Indian market
@@ -42,6 +43,27 @@ export function CheckoutModal() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [confirmedOrder, setConfirmedOrder] = useState(null)
   const [isCopied, setIsCopied] = useState(false)
+
+  // Auto-fill from authenticated user profile
+  useEffect(() => {
+    if (user && isCheckoutOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: user.name || prev.fullName,
+        email: user.email || prev.email,
+        phone: user.phone ? user.phone.replace("+91", "").trim() : prev.phone,
+        ...(user.defaultAddress
+          ? {
+              flatHouse: user.defaultAddress.street.split(",")[0] || prev.flatHouse,
+              streetArea: user.defaultAddress.street.split(",").slice(1).join(",").trim() || user.defaultAddress.street,
+              city: user.defaultAddress.city || prev.city,
+              state: user.defaultAddress.state || prev.state,
+              pincode: user.defaultAddress.pincode || prev.pincode,
+            }
+          : {}),
+      }))
+    }
+  }, [user, isCheckoutOpen])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

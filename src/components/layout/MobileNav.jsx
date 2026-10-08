@@ -1,10 +1,10 @@
 import React from "react"
-import { Home, Compass, Heart, ShoppingBag } from "lucide-react"
+import { Home, Compass, Heart, ShoppingBag, User } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { cn } from "../../lib/utils"
 
 export function MobileNav({ onScrollToCatalog }) {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useStore()
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, setIsAuthOpen, user } = useStore()
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card/90 backdrop-blur-lg border-t border-border px-4 py-2 sm:hidden safe-area-pb">
@@ -55,6 +55,22 @@ export function MobileNav({ onScrollToCatalog }) {
             )}
           </div>
           <span className="text-[10px] font-medium">Cart</span>
+        </button>
+
+        <button
+          onClick={() => setIsAuthOpen(true)}
+          className="relative flex flex-col items-center gap-1 p-1 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {user ? (
+            <div className="h-5 w-5 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[9px]">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+          ) : (
+            <User className="h-5 w-5" />
+          )}
+          <span className="text-[10px] font-medium truncate max-w-[48px]">
+            {user ? user.name.split(" ")[0] : "Account"}
+          </span>
         </button>
       </div>
     </nav>

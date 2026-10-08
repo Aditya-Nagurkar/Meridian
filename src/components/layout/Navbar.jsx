@@ -4,6 +4,7 @@ import { useStore } from "../../context/StoreContext"
 import { useTheme } from "../../context/ThemeContext"
 import { CATEGORIES } from "../../lib/constants"
 import { formatCurrency, cn } from "../../lib/utils"
+import { UserMenu } from "../auth/UserMenu"
 
 export function Navbar({ onOpenFilterMobile }) {
   const {
@@ -88,8 +89,11 @@ export function Navbar({ onOpenFilterMobile }) {
             </div>
           </div>
 
-          {/* Right Action Icons: Theme, Wishlist, Cart */}
+          {/* Right Action Icons: Auth, Theme, Wishlist, Cart */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+            {/* User Account / Sign In */}
+            <UserMenu />
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
