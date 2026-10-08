@@ -8,12 +8,12 @@ export function ProductGrid({ products }) {
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 px-4 text-center rounded-3xl border border-dashed border-border bg-card/40 my-8">
-        <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mb-4">
-          <PackageX className="h-8 w-8" />
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-border bg-card/40 my-6">
+        <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mb-3">
+          <PackageX className="h-7 w-7" />
         </div>
-        <h3 className="text-lg font-bold text-foreground">No matching products found</h3>
-        <p className="text-sm text-muted-foreground max-w-md mt-1 mb-6">
+        <h3 className="text-base sm:text-lg font-bold text-foreground">No matching products found</h3>
+        <p className="text-xs sm:text-sm text-muted-foreground max-w-md mt-1 mb-5">
           We couldn't find any items matching your selected category, price range, or search criteria.
         </p>
         <button
@@ -28,7 +28,8 @@ export function ProductGrid({ products }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    /* 2 columns on phone screens, 3 on tablets/small laptops, 4 on desktop */
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

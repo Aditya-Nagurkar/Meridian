@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useMemo, useCallback } from "react"
 import { useLocalStorage } from "../hooks/useLocalStorage"
 import { useSessionStorage } from "../hooks/useSessionStorage"
-import { PROMO_CODES, FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING_COST, ESTIMATED_TAX_RATE } from "../lib/constants"
+import { PROMO_CODES, FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING_COST, ESTIMATED_GST_RATE } from "../lib/constants"
 
 const StoreContext = createContext(null)
 
@@ -9,21 +9,21 @@ const INITIAL_FILTERS = {
   category: "all",
   searchQuery: "",
   sortBy: "featured",
-  maxPrice: 600,
+  maxPrice: 10000,
   inStockOnly: false,
 }
 
 export function StoreProvider({ children }) {
-  // 1. LocalStorage Persisted State: Shopping Cart & Wishlist
-  const [cart, setCart] = useLocalStorage("aura_cart", [])
-  const [wishlist, setWishlist] = useLocalStorage("aura_wishlist", [])
-  const [orders, setOrders] = useLocalStorage("aura_orders", [])
+  // 1. LocalStorage Persisted State: Shopping Cart, Wishlist & Order History
+  const [cart, setCart] = useLocalStorage("meridian_cart", [])
+  const [wishlist, setWishlist] = useLocalStorage("meridian_wishlist", [])
+  const [orders, setOrders] = useLocalStorage("meridian_orders", [])
 
-  // 2. SessionStorage Persisted State: Recently Viewed & Search Filter State
-  const [recentlyViewed, setRecentlyViewed] = useSessionStorage("aura_recently_viewed", [])
-  const [filters, setFilters] = useSessionStorage("aura_filters", INITIAL_FILTERS)
+  // 2. SessionStorage Persisted State: Recently Viewed & Active Filters
+  const [recentlyViewed, setRecentlyViewed] = useSessionStorage("meridian_recently_viewed", [])
+  const [filters, setFilters] = useSessionStorage("meridian_filters", INITIAL_FILTERS)
 
-  // 3. Temporary UI States (Drawers, Modals, Promo Code, Toast Notifications)
+  // 3. UI States (Drawers, Modals, Promo Code, Toast Notifications)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isWishlistOpen, setIsWishlistOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
@@ -112,25 +112,25 @@ export function StoreProvider({ children }) {
   // --- Promo Code Operations ---
   const applyPromoCode = useCallback((codeString) => {
     const code = codeString.trim().toUpperCase()
-    if (!code) return { success: false, message: "Please enter a code" }
+    if (!code) return { success: false, message: "Please enter a coupon code" }
 
     const promo = PROMO_CODES[code]
     if (!promo) {
-      addToast(`Promo code "${code}" is invalid.`, "error")
-      return { success: false, message: "Invalid promo code" }
+      addToast(`Coupon "${code}" is invalid or expired.`, "error")
+      return { success: false, message: "Invalid coupon code" }
     }
 
     setAppliedPromo({ code, ...promo })
-    addToast(`Promo code "${code}" applied successfully!`, "success")
+    addToast(`Coupon "${code}" applied successfully!`, "success")
     return { success: true, message: "Applied successfully!" }
   }, [addToast])
 
   const removePromoCode = useCallback(() => {
     setAppliedPromo(null)
-    addToast("Promo code removed.", "info")
+    addToast("Coupon code removed.", "info")
   }, [addToast])
 
-  // --- Cart Calculations ---
+  // --- Cart Financial Calculations (Rupees & GST) ---
   const cartCount = useMemo(() => {
     return cart.reduce((acc, item) => acc + item.quantity, 0)
   }, [cart])
@@ -145,7 +145,7 @@ export function StoreProvider({ children }) {
       return 0
     }
     if (appliedPromo.discountPercent) {
-      return (subtotal * appliedPromo.discountPercent) / 100
+      return Math.round((subtotal * appliedPromo.discountPercent) / 100)
     }
     if (appliedPromo.discountAmount) {
       return Math.min(appliedPromo.discountAmount, subtotal)
@@ -167,15 +167,15 @@ export function StoreProvider({ children }) {
     return Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100)
   }, [subtotal])
 
-  const tax = useMemo(() => {
+  const gst = useMemo(() => {
     const taxableAmount = Math.max(0, subtotal - discount)
-    return taxableAmount * ESTIMATED_TAX_RATE
+    return Math.round(taxableAmount * ESTIMATED_GST_RATE)
   }, [subtotal, discount])
 
   const total = useMemo(() => {
     if (subtotal === 0) return 0
-    return Math.max(0, subtotal - discount) + shipping + tax
-  }, [subtotal, discount, shipping, tax])
+    return Math.max(0, subtotal - discount) + shipping + gst
+  }, [subtotal, discount, shipping, gst])
 
   // --- Wishlist Operations ---
   const isInWishlist = useCallback((productId) => {
@@ -189,7 +189,7 @@ export function StoreProvider({ children }) {
       addToast(`Removed "${product.name}" from wishlist.`, "info")
     } else {
       setWishlist((prev) => [...prev, product])
-      addToast(`Saved "${product.name}" to wishlist.`, "success")
+      addToast(`Saved "${product.name}" to your wishlist.`, "success")
     }
   }, [isInWishlist, setWishlist, addToast])
 
@@ -222,7 +222,7 @@ export function StoreProvider({ children }) {
       subtotal,
       discount,
       shipping,
-      tax,
+      gst,
       total,
       shippingAddress: orderDetails.shippingAddress,
       paymentMethod: orderDetails.paymentMethod,
@@ -232,7 +232,7 @@ export function StoreProvider({ children }) {
     clearCart()
     setAppliedPromo(null)
     return newOrder
-  }, [cart, subtotal, discount, shipping, tax, total, setOrders, clearCart])
+  }, [cart, subtotal, discount, shipping, gst, total, setOrders, clearCart])
 
   const value = {
     // Cart
@@ -245,7 +245,8 @@ export function StoreProvider({ children }) {
     subtotal,
     discount,
     shipping,
-    tax,
+    tax: gst,
+    gst,
     total,
     freeShippingRemaining,
     freeShippingProgress,

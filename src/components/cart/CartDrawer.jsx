@@ -3,7 +3,7 @@ import { ShoppingBag, ArrowRight, Tag, X, Sparkles, Trash2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Drawer } from "../common/Drawer"
 import { CartItem } from "./CartItem"
-import { Button } from "../common/Button"
+import { Button } from "../ui/button"
 import { formatCurrency } from "../../lib/utils"
 
 export function CartDrawer() {
@@ -15,7 +15,7 @@ export function CartDrawer() {
     subtotal,
     discount,
     shipping,
-    tax,
+    gst,
     total,
     freeShippingRemaining,
     freeShippingProgress,
@@ -53,8 +53,8 @@ export function CartDrawer() {
       countBadge={`${cartCount} items`}
       subtitle={
         freeShippingRemaining > 0
-          ? `Add ${formatCurrency(freeShippingRemaining)} more for complimentary express delivery`
-          : "🎉 You have earned complimentary express shipping!"
+          ? `Add ${formatCurrency(freeShippingRemaining)} more for complimentary All-India express delivery`
+          : "🎉 You have unlocked Free Pan-India Express Delivery!"
       }
       footer={
         cart.length > 0 ? (
@@ -67,7 +67,7 @@ export function CartDrawer() {
                     <Tag className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <input
                       type="text"
-                      placeholder="Promo code (e.g. AURA20)"
+                      placeholder="Coupon code (e.g. INDIA20)"
                       value={promoInput}
                       onChange={(e) => setPromoInput(e.target.value)}
                       className="w-full pl-9 pr-3 py-2 text-xs uppercase font-mono rounded-xl bg-muted/60 border border-border focus:outline-none focus:ring-1 focus:ring-primary"
@@ -79,7 +79,7 @@ export function CartDrawer() {
                 </div>
                 {promoError && <p className="text-[11px] text-red-500 pl-1">{promoError}</p>}
                 <p className="text-[10px] text-muted-foreground pl-1">
-                  Tip: Use code <span className="font-bold underline cursor-pointer" onClick={() => setPromoInput("AURA20")}>AURA20</span> for 20% off
+                  Tip: Use code <span className="font-bold underline cursor-pointer" onClick={() => setPromoInput("INDIA20")}>INDIA20</span> for 20% off
                 </p>
               </form>
             ) : (
@@ -91,14 +91,14 @@ export function CartDrawer() {
                 <button
                   onClick={removePromoCode}
                   className="text-muted-foreground hover:text-foreground p-1"
-                  aria-label="Remove promo code"
+                  aria-label="Remove coupon code"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
             )}
 
-            {/* Price Calculations Breakdown */}
+            {/* Price Calculations Breakdown (Rupees & GST) */}
             <div className="space-y-2 text-xs pt-2">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
@@ -106,20 +106,20 @@ export function CartDrawer() {
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
-                  <span>Discount</span>
+                  <span>Coupon Discount</span>
                   <span>-{formatCurrency(discount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-muted-foreground">
-                <span>Shipping</span>
+                <span>Delivery Charges</span>
                 <span>{shipping === 0 ? "FREE" : formatCurrency(shipping)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
-                <span>Estimated Tax (8%)</span>
-                <span>{formatCurrency(tax)}</span>
+                <span>Estimated GST (18%)</span>
+                <span>{formatCurrency(gst)}</span>
               </div>
               <div className="flex justify-between text-base font-bold text-foreground pt-2 border-t border-border">
-                <span>Estimated Total</span>
+                <span>Total Amount</span>
                 <span>{formatCurrency(total)}</span>
               </div>
             </div>
@@ -152,7 +152,7 @@ export function CartDrawer() {
         <div className="flex justify-between text-xs font-medium mb-1.5">
           <span className="flex items-center gap-1">
             <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-            <span>Shipping Goal</span>
+            <span>Free Delivery Target</span>
           </span>
           <span className="text-muted-foreground font-mono">
             {freeShippingRemaining > 0 ? `${formatCurrency(freeShippingRemaining)} away` : "Unlocked"}
@@ -180,7 +180,7 @@ export function CartDrawer() {
           </div>
           <h3 className="text-base font-bold text-foreground">Your shopping bag is empty</h3>
           <p className="text-xs text-muted-foreground max-w-xs mt-1 mb-6">
-            Explore our curated catalog of minimalist gear, footwear, and accessories.
+            Explore our curated selection of electronics, apparel, and footwear designed for India.
           </p>
           <Button onClick={() => setIsCartOpen(false)} size="sm" variant="secondary">
             Continue Shopping

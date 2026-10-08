@@ -1,10 +1,11 @@
 import React, { useState } from "react"
 import confetti from "canvas-confetti"
-import { CheckCircle2, CreditCard, ShieldCheck, Truck, ArrowRight, Lock, Copy, Check, Sparkles } from "lucide-react"
+import { CheckCircle2, CreditCard, ShieldCheck, Truck, ArrowRight, Lock, Copy, Check, Sparkles, Smartphone, Banknote, Building2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Modal } from "../common/Modal"
-import { Button } from "../common/Button"
+import { Button } from "../ui/button"
 import { formatCurrency, generateOrderId } from "../../lib/utils"
+import { INDIAN_STATES } from "../../lib/constants"
 
 export function CheckoutModal() {
   const {
@@ -14,26 +15,28 @@ export function CheckoutModal() {
     subtotal,
     discount,
     shipping,
-    tax,
+    gst,
     total,
     completeOrder,
     appliedPromo,
   } = useStore()
 
-  // Form Fields
+  // Form Fields customized for Indian market
   const [formData, setFormData] = useState({
-    fullName: "Alex Mercer",
-    email: "alex.mercer@atelier-aura.com",
-    phone: "+1 (555) 234-5678",
-    address: "742 Evergreen Terrace, Suite 4B",
-    city: "San Francisco",
-    state: "CA",
-    postalCode: "94107",
-    country: "United States",
-    paymentMethod: "card",
-    cardNumber: "•••• •••• •••• 4242",
-    cardExp: "12/28",
-    cardCvc: "888",
+    fullName: "Rohit Verma",
+    email: "rohit.verma@meridian.in",
+    phone: "9876543210",
+    flatHouse: "Flat 402, Signature Towers",
+    streetArea: "Indiranagar 100ft Road",
+    city: "Bengaluru",
+    state: "Karnataka",
+    pincode: "560038",
+    paymentMethod: "upi", // upi | card | cod | netbanking
+    upiId: "rohit.verma@okhdfcbank",
+    cardNumber: "5241 •••• •••• 8892",
+    cardExp: "08/29",
+    cardCvc: "742",
+    bank: "HDFC Bank",
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -47,7 +50,6 @@ export function CheckoutModal() {
 
   const triggerConfettiCelebration = () => {
     try {
-      // Fire confetti bursts from left and right
       confetti({
         particleCount: 80,
         spread: 70,
@@ -59,7 +61,7 @@ export function CheckoutModal() {
         origin: { y: 0.6, x: 0.7 },
       })
     } catch (e) {
-      // Graceful fallback if canvas is restricted
+      // Fallback
     }
   }
 
@@ -67,7 +69,7 @@ export function CheckoutModal() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate realistic payment gateway processing delay
+    // Simulate realistic payment gateway processing delay (Razorpay / Cashfree style)
     setTimeout(() => {
       const orderId = generateOrderId()
       const newOrder = completeOrder({
@@ -75,13 +77,14 @@ export function CheckoutModal() {
         shippingAddress: {
           name: formData.fullName,
           email: formData.email,
-          address: formData.address,
+          phone: `+91 ${formData.phone}`,
+          address: `${formData.flatHouse}, ${formData.streetArea}`,
           city: formData.city,
           state: formData.state,
-          postalCode: formData.postalCode,
-          country: formData.country,
+          postalCode: formData.pincode,
+          country: "India",
         },
-        paymentMethod: formData.paymentMethod,
+        paymentMethod: formData.paymentMethod.toUpperCase(),
       })
 
       setIsSubmitting(false)
@@ -110,18 +113,21 @@ export function CheckoutModal() {
       isOpen={isCheckoutOpen}
       onClose={handleClose}
       maxWidth="max-w-3xl"
-      title={confirmedOrder ? "Order Confirmed!" : "Secure Checkout"}
+      title={confirmedOrder ? "Order Placed Successfully!" : "Secure Checkout (All-India Delivery)"}
       description={
         confirmedOrder
-          ? "Your order has been received and is being prepared for dispatch."
-          : "Complete your simulated transaction with zero risk."
+          ? "Your order has been verified and registered for courier dispatch."
+          : "Complete your transaction with UPI, RuPay/Cards, or Cash on Delivery."
       }
     >
       {confirmedOrder ? (
         /* Order Confirmation Success Screen */
-        <div className="space-y-6 py-2 text-center animate-fade-in">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="h-12 w-12" />
+        <div className="max-h-[82vh] overflow-y-auto pr-1 space-y-6 py-2 text-center animate-fade-in">
+          <div className="relative mx-auto flex h-20 w-20 items-center justify-center">
+            <img src="/logo.png" alt="Meridian" className="h-16 w-16 object-contain drop-shadow" />
+            <div className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md">
+              <CheckCircle2 className="h-4 w-4" />
+            </div>
           </div>
 
           <div>
@@ -140,8 +146,7 @@ export function CheckoutModal() {
               Thank You, {confirmedOrder.shippingAddress.name}!
             </h3>
             <p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">
-              A confirmation email has been sent to{" "}
-              <strong className="text-foreground">{confirmedOrder.shippingAddress.email}</strong>.
+              Order confirmation SMS sent to <strong className="text-foreground">{confirmedOrder.shippingAddress.phone}</strong> and email to <strong className="text-foreground">{confirmedOrder.shippingAddress.email}</strong>.
             </p>
           </div>
 
@@ -149,38 +154,43 @@ export function CheckoutModal() {
           <div className="rounded-2xl border border-border bg-muted/30 p-5 text-left text-xs space-y-3">
             <div className="flex justify-between pb-2 border-b border-border/60 text-muted-foreground">
               <span>Estimated Delivery</span>
-              <span className="font-semibold text-foreground">3 - 5 Business Days (Express)</span>
+              <span className="font-semibold text-foreground">2 - 4 Business Days (Blue Dart / Delhivery Express)</span>
             </div>
 
             <div className="flex justify-between text-muted-foreground">
-              <span>Shipping Destination</span>
-              <span className="font-medium text-foreground text-right">
+              <span>Delivery Address</span>
+              <span className="font-medium text-foreground text-right max-w-xs">
                 {confirmedOrder.shippingAddress.address}, {confirmedOrder.shippingAddress.city},{" "}
-                {confirmedOrder.shippingAddress.state} {confirmedOrder.shippingAddress.postalCode}
+                {confirmedOrder.shippingAddress.state} - {confirmedOrder.shippingAddress.postalCode}
               </span>
             </div>
 
             <div className="flex justify-between text-muted-foreground">
-              <span>Payment Simulated via</span>
+              <span>Payment Mode</span>
               <span className="font-medium text-foreground uppercase">
-                {confirmedOrder.paymentMethod} (Encrypted)
+                {confirmedOrder.paymentMethod} (Verified & Encrypted)
               </span>
             </div>
 
             <div className="flex justify-between text-muted-foreground">
-              <span>Items Purchased</span>
+              <span>Items in Package</span>
               <span className="font-semibold text-foreground">
-                {confirmedOrder.items.reduce((acc, i) => acc + i.quantity, 0)} items
+                {confirmedOrder.items.reduce((acc, i) => acc + i.quantity, 0)} units
               </span>
+            </div>
+
+            <div className="flex justify-between text-muted-foreground">
+              <span>GST Included (18%)</span>
+              <span className="font-medium text-foreground">{formatCurrency(confirmedOrder.gst)}</span>
             </div>
 
             <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border">
-              <span>Total Amount Paid</span>
+              <span>Total Amount Paid / Payable</span>
               <span>{formatCurrency(confirmedOrder.total)}</span>
             </div>
           </div>
 
-          {/* LocalStorage Note */}
+          {/* Storage & Invoice Note */}
           <div className="text-[11px] text-muted-foreground bg-primary/5 p-3 rounded-xl border border-primary/10">
             💾 <strong>Storage Integration:</strong> Your cart has been safely cleared from{" "}
             <code>localStorage</code>, and this order receipt has been persisted to your local order history.
@@ -193,13 +203,14 @@ export function CheckoutModal() {
         </div>
       ) : (
         /* Checkout Form View */
-        <form onSubmit={handleSubmitOrder} className="space-y-6">
+        <div className="max-h-[82vh] overflow-y-auto pr-1">
+          <form onSubmit={handleSubmitOrder} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left: Contact & Shipping Form */}
+            {/* Left: Contact & Address in India */}
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Truck className="h-4 w-4" />
-                <span>Shipping Details</span>
+                <span>Delivery Address (India)</span>
               </h4>
 
               <div className="space-y-3 text-xs">
@@ -217,6 +228,23 @@ export function CheckoutModal() {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
+                    <label className="font-medium text-foreground block mb-1">10-Digit Mobile</label>
+                    <div className="flex items-center">
+                      <span className="p-2.5 bg-muted border border-r-0 border-border rounded-l-xl text-muted-foreground font-mono">
+                        +91
+                      </span>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={10}
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="w-full p-2.5 rounded-r-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                      />
+                    </div>
+                  </div>
+                  <div>
                     <label className="font-medium text-foreground block mb-1">Email</label>
                     <input
                       type="email"
@@ -227,32 +255,45 @@ export function CheckoutModal() {
                       className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
-                  <div>
-                    <label className="font-medium text-foreground block mb-1">Phone</label>
-                    <input
-                      type="text"
-                      required
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                  </div>
                 </div>
 
                 <div>
-                  <label className="font-medium text-foreground block mb-1">Street Address</label>
+                  <label className="font-medium text-foreground block mb-1">Flat / House No. / Building</label>
                   <input
                     type="text"
                     required
-                    name="address"
-                    value={formData.address}
+                    name="flatHouse"
+                    value={formData.flatHouse}
+                    onChange={handleInputChange}
+                    className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-medium text-foreground block mb-1">Street / Locality / Landmark</label>
+                  <input
+                    type="text"
+                    required
+                    name="streetArea"
+                    value={formData.streetArea}
                     onChange={handleInputChange}
                     className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <label className="font-medium text-foreground block mb-1">PIN Code</label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={6}
+                      name="pincode"
+                      value={formData.pincode}
+                      onChange={handleInputChange}
+                      className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                    />
+                  </div>
                   <div>
                     <label className="font-medium text-foreground block mb-1">City</label>
                     <input
@@ -265,64 +306,85 @@ export function CheckoutModal() {
                     />
                   </div>
                   <div>
-                    <label className="font-medium text-foreground block mb-1">State / Prov</label>
-                    <input
-                      type="text"
-                      required
+                    <label className="font-medium text-foreground block mb-1">State</label>
+                    <select
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-medium text-foreground block mb-1">Postal Code</label>
-                    <input
-                      type="text"
-                      required
-                      name="postalCode"
-                      value={formData.postalCode}
-                      onChange={handleInputChange}
-                      className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
+                      className="w-full p-2.5 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer text-xs"
+                    >
+                      {INDIAN_STATES.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right: Payment Simulation & Summary */}
+            {/* Right: Payment Simulation (UPI, RuPay/Cards, COD) */}
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <CreditCard className="h-4 w-4" />
-                <span>Payment Simulation</span>
+                <span>Payment Options (India)</span>
               </h4>
 
-              {/* Payment Methods Tabs */}
+              {/* Payment Methods Grid */}
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: "card", label: "Credit Card" },
-                  { id: "applepay", label: "Apple Pay" },
-                  { id: "cod", label: "Pay Later" },
-                ].map((m) => (
-                  <button
-                    type="button"
-                    key={m.id}
-                    onClick={() => setFormData((p) => ({ ...p, paymentMethod: m.id }))}
-                    className={`py-2 px-1 text-center rounded-xl text-xs font-semibold border transition-all ${
-                      formData.paymentMethod === m.id
-                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                        : "bg-muted/40 text-muted-foreground border-border hover:text-foreground"
-                    }`}
-                  >
-                    {m.label}
-                  </button>
-                ))}
+                  { id: "upi", label: "UPI (GPay / PhonePe)", icon: Smartphone },
+                  { id: "card", label: "RuPay / Cards", icon: CreditCard },
+                  { id: "cod", label: "Cash on Delivery", icon: Banknote },
+                ].map((m) => {
+                  const Icon = m.icon
+                  const isSelected = formData.paymentMethod === m.id
+                  return (
+                    <button
+                      type="button"
+                      key={m.id}
+                      onClick={() => setFormData((p) => ({ ...p, paymentMethod: m.id }))}
+                      className={`py-2 px-1 text-center rounded-xl text-xs font-semibold border flex flex-col items-center gap-1 transition-all ${
+                        isSelected
+                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                          : "bg-muted/40 text-muted-foreground border-border hover:text-foreground"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{m.label}</span>
+                    </button>
+                  )
+                })}
               </div>
 
+              {/* UPI Option Form */}
+              {formData.paymentMethod === "upi" && (
+                <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 space-y-2 text-xs">
+                  <label className="font-medium text-foreground block">Enter UPI ID / VPA</label>
+                  <div className="relative">
+                    <Smartphone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      name="upiId"
+                      value={formData.upiId}
+                      onChange={handleInputChange}
+                      placeholder="mobileNumber@upi or name@okhdfcbank"
+                      className="w-full pl-9 p-2 rounded-lg bg-card border border-border font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 pt-1 text-[11px] text-muted-foreground">
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">✓ Instant Approval</span>
+                    <span>Supports Google Pay, PhonePe, Paytm, BHIM</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Card Option Form */}
               {formData.paymentMethod === "card" && (
                 <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 space-y-3 text-xs">
                   <div>
-                    <label className="font-medium text-foreground block mb-1">Simulated Card</label>
+                    <label className="font-medium text-foreground block mb-1">RuPay / Visa / Mastercard</label>
                     <div className="relative">
                       <CreditCard className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                       <input
@@ -337,7 +399,7 @@ export function CheckoutModal() {
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="font-medium text-foreground block mb-1">Exp Date</label>
+                      <label className="font-medium text-foreground block mb-1">Expiry Date</label>
                       <input
                         type="text"
                         name="cardExp"
@@ -347,7 +409,7 @@ export function CheckoutModal() {
                       />
                     </div>
                     <div>
-                      <label className="font-medium text-foreground block mb-1">Security CVC</label>
+                      <label className="font-medium text-foreground block mb-1">Security CVV</label>
                       <input
                         type="text"
                         name="cardCvc"
@@ -360,7 +422,19 @@ export function CheckoutModal() {
                 </div>
               )}
 
-              {/* Order Summary Mini-Receipt */}
+              {/* COD Option Note */}
+              {formData.paymentMethod === "cod" && (
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-1">
+                  <span className="font-bold text-amber-700 dark:text-amber-400 block">
+                    Cash on Delivery Available
+                  </span>
+                  <p className="text-muted-foreground text-[11px]">
+                    Pay cash or scan courier QR code with UPI at the time of delivery. Free verification OTP will be sent to +91 {formData.phone}.
+                  </p>
+                </div>
+              )}
+
+              {/* Order Summary Receipt in Rupees */}
               <div className="p-3.5 rounded-xl bg-muted/30 border border-border/60 space-y-2 text-xs">
                 <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal ({cart.length} items)</span>
@@ -368,20 +442,20 @@ export function CheckoutModal() {
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
-                    <span>Discount ({appliedPromo?.code})</span>
+                    <span>Coupon Discount ({appliedPromo?.code})</span>
                     <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Shipping</span>
+                  <span>Delivery Charges</span>
                   <span>{shipping === 0 ? "FREE" : formatCurrency(shipping)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Estimated Tax</span>
-                  <span>{formatCurrency(tax)}</span>
+                  <span>Estimated GST (18%)</span>
+                  <span>{formatCurrency(gst)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border">
-                  <span>Final Total</span>
+                  <span>Total Amount Payable</span>
                   <span className="font-mono">{formatCurrency(total)}</span>
                 </div>
               </div>
@@ -392,7 +466,7 @@ export function CheckoutModal() {
           <div className="pt-2 border-t border-border flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <Lock className="h-3.5 w-3.5 text-emerald-500" />
-              <span>Simulated 256-Bit SSL Encryption</span>
+              <span>256-Bit Encrypted Indian Banking Gateway</span>
             </div>
 
             <Button
@@ -400,12 +474,13 @@ export function CheckoutModal() {
               isLoading={isSubmitting}
               className="px-6 h-11 text-sm font-bold shadow-lg"
             >
-              <span>Authorize & Place Order</span>
+              <span>Confirm & Place Order</span>
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
         </form>
-      )}
-    </Modal>
-  )
+      </div>
+    )}
+  </Modal>
+)
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { ShieldCheck, RefreshCw, Truck, ArrowRight, Github, Heart } from "lucide-react"
+import { ShieldCheck, RefreshCw, Truck, ArrowRight, CreditCard } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 
 export function Footer() {
@@ -12,7 +12,7 @@ export function Footer() {
       addToast("Please enter a valid email address.", "error")
       return
     }
-    addToast("Welcome to AURA Club! 10% coupon code: WELCOME10", "success")
+    addToast("Welcome to Meridian Club! Use coupon code FIRST10 for 10% off.", "success")
     setEmail("")
   }
 
@@ -26,9 +26,9 @@ export function Footer() {
               <Truck className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-foreground">Global Express Shipping</h4>
+              <h4 className="text-sm font-bold text-foreground">Pan-India Express Delivery</h4>
               <p className="text-xs text-muted-foreground mt-1">
-                Complimentary insured delivery on orders over $150. Tracked end-to-end.
+                Complimentary insured delivery on orders over ₹1,499. Partnered with Blue Dart, Delhivery & DTDC.
               </p>
             </div>
           </div>
@@ -38,9 +38,9 @@ export function Footer() {
               <RefreshCw className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-foreground">30-Day Effortless Returns</h4>
+              <h4 className="text-sm font-bold text-foreground">7-Day Easy Replacements</h4>
               <p className="text-xs text-muted-foreground mt-1">
-                Risk-free home trial. Pre-paid return labels included inside every delivery parcel.
+                Zero hassle door-to-door reverse pickup for sizing or defect exchanges across 19,000+ Indian PIN codes.
               </p>
             </div>
           </div>
@@ -50,9 +50,9 @@ export function Footer() {
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-foreground">2-Year Atelier Guarantee</h4>
+              <h4 className="text-sm font-bold text-foreground">1-Year Pan-India Warranty</h4>
               <p className="text-xs text-muted-foreground mt-1">
-                Every hardware piece and garment is tested for uncompromising longevity.
+                Official brand warranty and BIS certified hardware with dedicated service center support.
               </p>
             </div>
           </div>
@@ -61,55 +61,57 @@ export function Footer() {
         {/* Links & Newsletter */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 py-12 border-b border-border">
           <div className="md:col-span-1 space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                A
-              </div>
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/logo.png"
+                alt="Meridian Golden Orbital Emblem"
+                className="h-8 w-8 object-contain drop-shadow"
+              />
               <span className="font-extrabold text-lg tracking-tight font-['Space_Grotesk']">
-                AURA
+                MERIDIAN
               </span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Curated everyday performance essentials, minimalist footwear, modular accessories, and precision audio.
+              Premium everyday lifestyle essentials, BIS-certified audio, breathable natural fabrics, and genuine leather goods.
             </p>
             <div className="pt-2 flex items-center gap-2 text-xs text-muted-foreground font-mono">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              All systems operational
+              GST Compliant Invoicing
             </div>
           </div>
 
           <div>
             <h5 className="text-xs font-bold uppercase tracking-wider text-foreground mb-4">
-              Collections
+              Categories
             </h5>
             <ul className="space-y-2.5 text-xs text-muted-foreground">
-              <li><span className="hover:text-foreground cursor-pointer transition-colors">Precision Electronics</span></li>
-              <li><span className="hover:text-foreground cursor-pointer transition-colors">Aerolite Footwear</span></li>
-              <li><span className="hover:text-foreground cursor-pointer transition-colors">Architectural Apparel</span></li>
-              <li><span className="hover:text-foreground cursor-pointer transition-colors">Modular Accessories</span></li>
-              <li><span className="hover:text-foreground cursor-pointer transition-colors">Archive & Releases</span></li>
+              <li><span className="hover:text-foreground cursor-pointer transition-colors">Audio & Smart Wearables</span></li>
+              <li><span className="hover:text-foreground cursor-pointer transition-colors">Ergonomic Footwear</span></li>
+              <li><span className="hover:text-foreground cursor-pointer transition-colors">Pure French Linen Shirts</span></li>
+              <li><span className="hover:text-foreground cursor-pointer transition-colors">Full-Grain Leather Wallets</span></li>
+              <li><span className="hover:text-foreground cursor-pointer transition-colors">Weatherproof Commuter Bags</span></li>
             </ul>
           </div>
 
           <div>
             <h5 className="text-xs font-bold uppercase tracking-wider text-foreground mb-4">
-              Architecture & Tech
+              Supported Payments
             </h5>
             <ul className="space-y-2.5 text-xs text-muted-foreground">
-              <li><span className="text-foreground font-medium">React 18 & Vite</span></li>
-              <li><span className="text-foreground font-medium">Tailwind CSS 3.4</span></li>
-              <li><span className="text-foreground font-medium">Shadcn / UI Design tokens</span></li>
-              <li><span className="text-foreground font-medium">LocalStorage & SessionStorage</span></li>
-              <li><span className="text-foreground font-medium">Lucide Icons</span></li>
+              <li><span className="text-foreground font-medium">UPI (GPay, PhonePe, Paytm)</span></li>
+              <li><span className="text-foreground font-medium">RuPay / Visa / Mastercard</span></li>
+              <li><span className="text-foreground font-medium">Net Banking (HDFC, ICICI, SBI)</span></li>
+              <li><span className="text-foreground font-medium">Cash on Delivery (COD)</span></li>
+              <li><span className="text-foreground font-medium">No-Cost EMI Available</span></li>
             </ul>
           </div>
 
           <div>
             <h5 className="text-xs font-bold uppercase tracking-wider text-foreground mb-4">
-              Join the Vanguard
+              Stay Connected
             </h5>
             <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-              Subscribe for private drop keys, engineering notes, and insider discounts.
+              Subscribe for exclusive launch access, festive coupon drops, and private sales.
             </p>
             <form onSubmit={handleSubscribe} className="space-y-2">
               <div className="flex gap-2">
@@ -117,7 +119,7 @@ export function Footer() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder="Enter email address"
                   className="bg-muted/70 text-xs text-foreground px-3 py-2.5 rounded-lg border border-border flex-1 focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 <button
@@ -129,7 +131,7 @@ export function Footer() {
                 </button>
               </div>
               <span className="text-[10px] text-muted-foreground block">
-                Instant 10% coupon code on subscription.
+                Get an instant 10% coupon code (FIRST10).
               </span>
             </form>
           </div>
@@ -137,11 +139,11 @@ export function Footer() {
 
         {/* Bottom Credits */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} AURA Modern Gear. Built with React, Tailwind CSS, & Vite.</p>
+          <p>© {new Date().getFullYear()} Meridian Retail Technologies Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span className="hover:text-foreground cursor-pointer">Privacy Policy</span>
             <span className="hover:text-foreground cursor-pointer">Terms of Service</span>
-            <span className="hover:text-foreground cursor-pointer">Security Audit</span>
+            <span className="hover:text-foreground cursor-pointer">Shipping & Returns</span>
           </div>
         </div>
       </div>

@@ -1,79 +1,105 @@
-# ⚡ AURA Atelier // Modern Minimalist E-Commerce Platform
+# 🌐 MERIDIAN // Curated Modern Essentials & Electronics (Indian Market Edition)
 
-A production-ready, fully responsive, and visually stunning luxury E-Commerce web application built with **React**, **Vite**, **Tailwind CSS**, and **Lucide React**. 
-
-Drawing inspiration from **shadcn/ui** and **React Bits**, the interface features refined micro-interactions, sleek card designs, smooth animations, glassmorphic headers, and an aesthetic that works across mobile, tablet, and desktop viewports.
+A production-ready, fully responsive, and visually stunning luxury E-Commerce web application built with **React**, **Vite**, **Tailwind CSS**, **Lucide React**, **shadcn/ui**, and **React Bits**, tailored specifically for the **Indian consumer market**.
 
 ---
 
 ## 🌟 Table of Contents
 1. [Project Overview](#project-overview)
-2. [Key Features](#key-features)
-3. [Tech Stack & Dependencies](#tech-stack--dependencies)
-4. [Project Directory & File Structure](#project-directory--file-structure)
-5. [Complete File-by-File Breakdown](#complete-file-by-file-breakdown)
-6. [Project Explanation Guide (For Presentations & Reviews)](#project-explanation-guide-for-presentations--reviews)
+2. [shadcn/ui & React Bits Integration](#shadcnui--react-bits-integration)
+3. [Brand Identity: Golden Orbital M Emblem](#brand-identity-golden-orbital-m-emblem)
+4. [Indian Market Tailoring & Features](#indian-market-tailoring--features)
+5. [Key UI, Layout & Performance Upgrades](#key-ui-layout--performance-upgrades)
+6. [Tech Stack & Dependencies](#tech-stack--dependencies)
+7. [Project Directory & File Structure](#project-directory--file-structure)
+8. [Complete File-by-File Breakdown](#complete-file-by-file-breakdown)
+9. [Project Explanation Guide (For Presentations & Reviews)](#project-explanation-guide-for-presentations--reviews)
    - [Where each part comes from](#1-where-each-part-comes-from)
    - [How data flows between components](#2-how-data-flows-between-components)
    - [Why specific storage choices were made (LocalStorage vs. SessionStorage)](#3-why-specific-storage-choices-were-made)
    - [State management architecture & edge-case safety](#4-state-management-architecture--edge-case-safety)
-7. [Getting Started & Local Development](#getting-started--local-development)
+10. [Getting Started & Local Development](#getting-started--local-development)
 
 ---
 
 ## 🚀 Project Overview
 
-**AURA Atelier** is designed as a direct-to-consumer luxury platform showcasing precision electronics, minimalist footwear, heavyweight architectural apparel, and artisan accessories. 
+**MERIDIAN** is designed as a direct-to-consumer modern lifestyle & technology brand for India. The brand communicates precision, reliability, and modern aesthetic distinction.
 
-The application implements a real-world shopping loop:
-- **Discover:** Live multi-field search (press `/` to focus), category pill filtering, price slider, and stock status filters.
-- **Inspect:** Quick View inspection modal with multi-angle image galleries, technical specs, and variant selectors (sizes, colors).
-- **Save & Collect:** Wishlist system with badge counters and quick move-to-cart operations.
-- **Transact:** Slide-over cart drawer with free shipping milestone progress bar, coupon code validation (`AURA20`, `WELCOME10`), live tax/shipping calculations, and an interactive checkout modal with `canvas-confetti` celebration and order receipt generation.
+The catalog focuses on high-demand, high-utility products thoughtfully engineered for Indian climates, daily urban commutes, and modern lifestyles:
+- **Audio & Electronics:** 42dB Hybrid ANC True Wireless Earbuds with ENC for loud city commutes, 1.96" AMOLED calling smartwatches, 65% hot-swappable mechanical keyboards, and 3-in-1 fast wireless charging stations with BIS (Bureau of Indian Standards) compliance.
+- **Footwear:** Breathable bio-knit runners engineered for hot climates and handcrafted Agra full-grain buff leather penny loafers.
+- **Apparel:** 100% pure French linen mandarin collar shirts and 240 GSM bio-washed Supima cotton heavyweight t-shirts.
+- **Bags & Accessories:** Weatherproof commuter backpacks with 16" laptop padding and vegetable-tanned genuine leather wallets sized specifically for Indian currency notes with RFID protection.
 
 ---
 
-## 💎 Key Features
+## 🎨 shadcn/ui & React Bits Integration
 
-### 1. Responsive Layout & Navigation
-- **Mobile-First Responsiveness:** Optimized grid breakpoints (`grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4`).
-- **Glassmorphic Sticky Header:** Real-time search bar with keyboard shortcut (`/`), category navigation, dark/light theme switch, wishlist counter badge, and shopping cart trigger with dynamic badge count.
-- **Mobile Bottom Navigation Dock:** Smartphone dock navigation (`Home`, `Explore`, `Wishlist`, `Cart`) for effortless one-handed thumb interaction.
-- **Announcement Bar:** Dynamic header bar displaying promo codes and live distance to the complimentary free shipping threshold.
+### How shadcn/ui and React Bits Work
+Neither **shadcn/ui** nor **React Bits** are monolithic npm packages you `npm install shadcn`. Instead:
+1. **shadcn/ui** is an open architecture built on top of **Radix UI primitives** (`@radix-ui/react-slot`, `@radix-ui/react-dialog`) and **class-variance-authority (`cva`)**. Components live in `src/components/ui/` giving you 100% ownership and zero third-party vendor lock-in.
+2. **React Bits (`reactbits.dev`)** is an open-source library of micro-interaction components powered by **Framer Motion**, Canvas shaders, and Tailwind CSS. Components live in `src/components/reactbits/`.
 
-### 2. Product Catalog & Filtering
-- **Rich Mock Catalog:** 12 curated products across Electronics, Footwear, Apparel, and Accessories with high-resolution imagery, star ratings, review counts, stock quotas, and specs.
-- **Multi-Vector Filtering:**
-  - Category tabs (`All`, `Electronics`, `Footwear`, `Apparel`, `Accessories`).
-  - Real-time search across titles, descriptions, categories, and technical specs.
-  - Price ceiling slider ($50 – $600).
-  - In-stock only filter toggle.
-  - Dynamic sorting (Featured, Price: Low to High, Price: High to Low, Highest Rated, Alphabetical).
-- **Quick View Modal:** Full product deep-dive with variant pickers (sizes, colors), quantity increment/decrement bounded by live inventory, and specs chips.
+### Components Integrated:
+* **shadcn/ui Primitives (`src/components/ui/`):**
+  - [`button.jsx`](file:///home/blaze/Documents/Ecom/src/components/ui/button.jsx): Uses Radix Slot (`asChild`), `cva` variants (`default`, `destructive`, `outline`, `secondary`, `ghost`, `link`), and built-in loading spinners.
+  - [`badge.jsx`](file:///home/blaze/Documents/Ecom/src/components/ui/badge.jsx): Uses `cva` pill variants (`accent`, `warning`, `destructive`, `success`).
+  - [`card.jsx`](file:///home/blaze/Documents/Ecom/src/components/ui/card.jsx): Standard Card header, title, description, content, and footer primitives.
+* **React Bits Components (`src/components/reactbits/`):**
+  - [`SpotlightCard.jsx`](file:///home/blaze/Documents/Ecom/src/components/reactbits/SpotlightCard.jsx): Tracks real-time mouse coordinates `(x, y)` to cast a golden ambient radial gradient glow over product cards.
+  - [`ShinyText.jsx`](file:///home/blaze/Documents/Ecom/src/components/reactbits/ShinyText.jsx): Creates continuous metallic gradient shimmer waves across headlines.
+  - [`AnimatedContent.jsx`](file:///home/blaze/Documents/Ecom/src/components/reactbits/AnimatedContent.jsx): Framer Motion spring physics entrance animation container.
 
-### 3. Dual-Tier Storage Architecture
-- **LocalStorage (Persistent across browser restarts & tabs):**
-  - Shopping Cart items, quantities, and selected variant options.
-  - Wishlist saved items.
-  - Completed order receipts and order history.
-  - Theme preference (`light` or `dark`).
-- **SessionStorage (Scoped to current browser session/tab):**
-  - "Recently Viewed Products" carousel that captures items inspected during the current browsing session without cluttering long-term storage.
-  - Active search filter states (category, max price, sort order).
+---
 
-### 4. Interactive Shopping Cart & Checkout
-- **Slide-Over Cart Drawer:** Smooth right-side drawer with bounded quantity adjusters, instant line total updates, and trash actions.
-- **Free Shipping Progress Meter:** Animated visual progress bar indicating how close the customer is to unlocking free express shipping ($150 threshold).
-- **Promo Code Engine:** Validates promo codes with instantaneous discounts:
-  - `AURA20` — 20% off entire order.
-  - `WELCOME10` — 10% welcome discount.
-  - `VIP50` — $50 off orders over $200.
-- **Simulated Checkout Modal:** Form validation (shipping details, simulated credit card with security masking), simulated SSL encryption, order placement processing delay, and a multi-burst confetti celebration (`canvas-confetti`) with an official order receipt and tracking ID.
+## ⚜️ Brand Identity: Golden Orbital M Emblem
 
-### 5. Shadcn/ui & React Bits Aesthetics
-- Clean neutral slate/zinc color palette with CSS variable tokens.
-- Light & Dark mode support with persistent user preference.
-- Micro-interactions: scale-down button press effects (`active:scale-95`), hover zoom image transitions, smooth dialog backdrops with blur, and floating toast notifications.
+The project features the custom **Golden Orbital M Emblem** identity (`public/logo.png`) seamlessly integrated across the platform:
+- **Browser Favicon:** Crisp high-resolution tab icon in `index.html`.
+- **Header Brand Mark:** Positioned in `Navbar.jsx` with subtle hover scaling and elevation.
+- **Collection Eyebrow:** Highlighted in the `Hero.jsx` collection badge.
+- **Footer Monogram:** Anchoring brand trust in `Footer.jsx`.
+- **Order Confirmation Seal:** Verified authenticity emblem in `CheckoutModal.jsx` upon successful order placement.
+
+---
+
+## 🇮🇳 Indian Market Tailoring & Features
+
+### 1. Currency & Pricing Localization
+- **Indian Rupee Standard (`₹`):** Formatted natively using `Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })` (e.g., `₹2,499`, `₹14,999`).
+- **GST Invoicing:** Displays estimated 18% Goods & Services Tax (GST) breakdown during cart and checkout reviews.
+- **Free Pan-India Delivery:** Express shipping unlocked for orders over ₹1,499 (Standard delivery ₹99).
+
+### 2. Payment Gateway Simulation (India Stack)
+- **UPI Integration:** Supports Unified Payments Interface (Google Pay, PhonePe, Paytm, BHIM) with VPA/UPI ID entry and instant simulation.
+- **RuPay & Cards:** Full support for domestic RuPay debit/credit cards alongside Visa and Mastercard.
+- **Cash on Delivery (COD):** Doorstep cash or courier QR payment option with OTP verification notice.
+- **Net Banking:** Support for major Indian banks (HDFC, ICICI, SBI, Axis).
+
+### 3. Localization in Logistics & Addressing
+- **Indian Address Fields:** 6-digit PIN code field, flat/house number, street/locality, city, and comprehensive state dropdown covering 16+ Indian states and union territories.
+- **Courier Integration Notes:** Trust badges referencing express logistics partners (Blue Dart, Delhivery, DTDC).
+- **Warranty & Quality Assurance:** Clear indicators for BIS certification, 1-Year Pan-India warranty support, and 7-Day doorstep exchange policies.
+
+---
+
+## ⚡ Key UI, Layout & Performance Upgrades
+
+### 1. High-Visibility Spacious Search Bar
+- **Wide Center Console:** Desktop search bar commands a generous `max-w-2xl` width in the header, ensuring long queries (*"noise cancelling earbuds"*, *"french linen shirt"*) are fully visible with clear typing cues, keyboard shortcut badge (`/`), and an instant clear button (`X`).
+- **Dedicated Category Sub-Nav:** Category pills (`All Products`, `Electronics & Audio`, `Footwear & Sneakers`, `Apparel & Essentials`, `Bags & Accessories`) are positioned in a clean secondary navigation bar below the main header, eliminating layout crowding.
+- **Mobile Full-Width Search:** Dedicated full-width input on mobile screens for effortless thumb access.
+
+### 2. Mobile 2-Column Product Grid (`grid-cols-2`)
+- **Smartphone E-Commerce Standard:** On mobile screens, products are displayed in a modern **2-column grid** (`grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6`) rather than oversized single blocks.
+- **Proportionate Mobile Cards:** Compact padding (`p-2.5 sm:p-4`), micro-badges, clamped text, and streamlined add-to-cart buttons.
+
+### 3. High-Performance Architecture
+- **`useDeferredValue`:** Search query filtering runs concurrently with React 18's `useDeferredValue()`, keeping input typing responsive at 60fps.
+- **Tokenized Search Index:** Pre-tokenized multi-field matching across titles, descriptions, categories, and technical specs.
+- **`React.memo`:** Product cards are memoized to eliminate redundant re-renders when drawers, modals, or toasts trigger state updates.
+- **Asynchronous Image Loading:** Images are loaded with `loading="lazy"` and `decoding="async"`.
 
 ---
 
@@ -81,11 +107,14 @@ The application implements a real-world shopping loop:
 
 | Package | Purpose |
 | :--- | :--- |
-| **React 18** | UI component architecture and state management (`useState`, `useEffect`, `useMemo`, `useCallback`, `useContext`) |
-| **Vite 6** | Lightning-fast build tool and development server with Hot Module Replacement (HMR) |
-| **Tailwind CSS 3.4** | Utility-first CSS styling, responsive grid, dark mode classes, and custom keyframes |
-| **Lucide React** | Clean, customizable modern icon set |
-| **clsx & tailwind-merge** | Safe conditional class merging utility (`cn`) following the shadcn/ui pattern |
+| **React 18** | UI component architecture and state management (`useState`, `useEffect`, `useMemo`, `useCallback`, `useDeferredValue`, `useContext`) |
+| **Vite 6** | Fast build tool and dev server with Hot Module Replacement (HMR) |
+| **Tailwind CSS 3.4** | Utility-first styling, responsive grid, dark mode classes, and custom keyframes |
+| **Framer Motion** | Spring physics animations powering React Bits components |
+| **class-variance-authority** | Type-safe variant-based class composition powering shadcn/ui components |
+| **@radix-ui/react-slot** | Polymorphic element composition (`asChild`) for shadcn/ui Buttons |
+| **Lucide React** | Modern, clean iconography |
+| **clsx & tailwind-merge** | Safe conditional class merging utility (`cn`) |
 | **canvas-confetti** | High-performance canvas-based particle bursts for celebratory checkout confirmation |
 
 ---
@@ -94,21 +123,23 @@ The application implements a real-world shopping loop:
 
 ```
 Ecom/
-├── index.html                     # HTML5 entry template with Plus Jakarta Sans & Space Grotesk fonts
-├── package.json                   # Project dependencies, scripts, and build metadata
-├── postcss.config.js              # PostCSS pipeline configuring Tailwind and Autoprefixer
-├── tailwind.config.js             # Tailwind design tokens, animations, keyframes, and color variables
-├── vite.config.js                 # Vite bundler configuration with React plugin
-├── README.md                      # Comprehensive project documentation and explanation guide
+├── public/
+│   └── logo.png                   # Golden Orbital M Emblem brand asset
+├── index.html                     # HTML5 template with Plus Jakarta Sans & Space Grotesk fonts
+├── package.json                   # Project dependencies and npm scripts
+├── postcss.config.js              # PostCSS pipeline for Tailwind and Autoprefixer
+├── tailwind.config.js             # Tailwind design tokens, animations, and color variables
+├── vite.config.js                 # Vite bundler configuration
+├── README.md                      # Comprehensive project documentation
 └── src/
     ├── main.jsx                   # React root bootstrap file
-    ├── App.jsx                    # Root coordinator component with layout, filtering, and modal mounting
-    ├── index.css                  # Tailwind directives, CSS variables (shadcn theme), and custom utilities
+    ├── App.jsx                    # Root coordinator component with deferred filtering and modal mounting
+    ├── index.css                  # Tailwind directives, CSS variables (shadcn theme), and utilities
     ├── lib/
-    │   ├── utils.js               # Utility helpers: cn(), formatCurrency(), generateOrderId()
-    │   └── constants.js           # Categories, promo codes, shipping rates, and sort options
+    │   ├── utils.js               # Utility helpers: cn(), formatCurrency() [INR], generateOrderId()
+    │   └── constants.js           # Categories, promo codes, shipping rates, GST, and Indian states
     ├── data/
-    │   └── products.js            # Mock dataset of 12 luxury products with images, specs, and stock
+    │   └── products.js            # Mock dataset of 12 curated products tailored for India
     ├── hooks/
     │   ├── useLocalStorage.js     # Custom hook for safe localStorage reads, writes, and cross-tab sync
     │   └── useSessionStorage.js   # Custom hook for tab-isolated sessionStorage reads and writes
@@ -116,23 +147,29 @@ Ecom/
     │   ├── StoreContext.jsx       # Global application state (Cart, Wishlist, Filters, Toasts, Orders)
     │   └── ThemeContext.jsx       # Theme state provider (Dark/Light mode) with localStorage persistence
     └── components/
+        ├── ui/                    # Official shadcn/ui Component Primitives
+        │   ├── button.jsx         # Radix Slot + CVA Button with loading states
+        │   ├── badge.jsx          # CVA Pill Indicator Badge
+        │   └── card.jsx           # Card, CardHeader, CardTitle, CardContent, CardFooter
+        ├── reactbits/             # Official React Bits Animation Components
+        │   ├── SpotlightCard.jsx  # Mouse coordinate cursor-tracking radial glow card
+        │   ├── ShinyText.jsx      # Continuous metallic shimmering text animation
+        │   └── AnimatedContent.jsx# Framer Motion spring physics entrance wrapper
         ├── common/
-        │   ├── Button.jsx         # Shadcn-inspired button component with variants and loading spinners
-        │   ├── Badge.jsx          # Pill indicator badge with color variants (accent, destructive, warning)
-        │   ├── Modal.jsx          # Accessible dialog with blur backdrop, body scroll lock, and ESC key listener
+        │   ├── Modal.jsx          # Accessible dialog with blur backdrop and ESC key listener
         │   ├── Drawer.jsx         # Slide-over panel component for Cart and Wishlist
-        │   ├── StarRating.jsx     # Star rating component with partial star rendering and review count
+        │   ├── StarRating.jsx     # Star rating component with partial star rendering
         │   └── Toast.jsx          # Animated floating notification toasts with auto-dismiss
         ├── layout/
         │   ├── AnnouncementBar.jsx# Top ticker bar with shipping goals and active discount hints
-        │   ├── Navbar.jsx         # Sticky glassmorphic header with search, theme switch, and drawer triggers
-        │   ├── Hero.jsx           # Editorial hero banner with stats, collection tags, and call-to-actions
+        │   ├── Navbar.jsx         # Wide search bar, Golden Orbital M Emblem, and category sub-nav
+        │   ├── Hero.jsx           # Editorial hero banner with React Bits ShinyText & AnimatedContent
         │   ├── MobileNav.jsx      # Bottom dock navigation bar for mobile devices
         │   └── Footer.jsx         # Sleek footer with warranty guarantees, newsletter form, and links
         ├── products/
-        │   ├── ProductCard.jsx    # Card with image hover-zoom, wishlist toggle, quick inspect, and add-to-cart
-        │   ├── ProductGrid.jsx    # Responsive grid layout with empty state handling
-        │   ├── FilterBar.jsx      # Category pills, price slider, in-stock toggle, and sort dropdown
+        │   ├── ProductCard.jsx    # Memoized SpotlightCard with image hover-zoom, wishlist, and add-to-cart
+        │   ├── ProductGrid.jsx    # Responsive 2-column mobile and 4-column desktop grid
+        │   ├── FilterBar.jsx      # Category pills, price slider (₹), in-stock toggle, and sort dropdown
         │   ├── QuickViewModal.jsx # Product inspection modal with gallery thumbnails and specs table
         │   └── RecentlyViewed.jsx # SessionStorage-powered recently viewed products section
         ├── cart/
@@ -141,221 +178,103 @@ Ecom/
         ├── wishlist/
         │   └── WishlistDrawer.jsx # Slide-over wishlist with item list, move-to-cart, and clear options
         └── checkout/
-            └── CheckoutModal.jsx  # Multi-step checkout form, payment simulation, and confetti receipt
+            └── CheckoutModal.jsx  # Indian address form, UPI/Card/COD simulation, and confetti receipt
 ```
 
 ---
 
 ## 🔍 Complete File-by-File Breakdown
 
-### Configuration & Entry Points
-1. **`index.html`**
-   - Declares the HTML5 structure, loads Google Fonts (`Plus Jakarta Sans` for body text and `Space Grotesk` for headlines), and binds the root React mount element `<div id="root"></div>`.
-2. **`vite.config.js`**
-   - Configures Vite to bundle the application using `@vitejs/plugin-react` and specifies the local development port.
-3. **`tailwind.config.js`**
-   - Implements shadcn-compatible CSS variable tokens (`hsl(var(--primary))`, `hsl(var(--background))`, etc.), defines custom animation keyframes (`slideUp`, `scaleIn`, `shimmer`), and enables class-based dark mode (`darkMode: 'class'`).
-4. **`src/index.css`**
-   - Sets the base CSS theme variables for both light and dark modes, applies subtle scrollbar styling, and defines utility classes like `.glass-header` and `.glass-card`.
-5. **`src/main.jsx`**
-   - Bootstraps the React virtual DOM using `ReactDOM.createRoot` inside `<React.StrictMode>`.
+### Configuration & Assets
+1. **`public/logo.png`**
+   - The official Golden Orbital M Emblem brand asset for MERIDIAN, served directly at `/logo.png` across navigation, favicon, hero, footer, and checkout confirmation.
+2. **`index.html`**
+   - Loads Google Fonts (`Plus Jakarta Sans` and `Space Grotesk`), binds `<div id="root"></div>`, binds the `/logo.png` favicon, and defines the site title **"MERIDIAN // Curated Modern Essentials & Electronics"**.
+3. **`package.json`**
+   - Declares dependencies, scripts (`dev`, `build`, `preview`), and project metadata (`meridian-store`).
+4. **`tailwind.config.js`**
+   - Implements shadcn-compatible CSS variable tokens, custom keyframes (`slideUp`, `scaleIn`, `shimmer`), and enables dark mode.
+5. **`src/index.css`**
+   - Base CSS theme variables for light and dark modes, modern scrollbars, and utility classes (`.glass-header`, `.glass-card`).
+6. **`src/main.jsx`**
+   - Bootstraps the React DOM using `ReactDOM.createRoot` inside `<React.StrictMode>`.
 
 ### Utilities & Data
-6. **`src/lib/utils.js`**
-   - `cn(...inputs)`: Merges conditional class names cleanly without Tailwind class collisions using `clsx` and `tailwind-merge`.
-   - `formatCurrency(amount)`: Formats numbers into currency format (e.g. `$349.00`).
-   - `generateOrderId()`: Generates random order reference codes (e.g., `AUR-92K4Z1`).
-7. **`src/lib/constants.js`**
-   - Defines static store parameters including `CATEGORIES`, `SORT_OPTIONS`, active `PROMO_CODES`, `FREE_SHIPPING_THRESHOLD` ($150), `STANDARD_SHIPPING_COST` ($12), and `ESTIMATED_TAX_RATE` (8%).
-8. **`src/data/products.js`**
-   - Supplies 12 detailed mock products featuring high-res Unsplash photography, realistic pricing, review counts, stock quotas, tags, sizes, colors, and technical specifications.
+7. **`src/lib/utils.js`**
+   - `formatCurrency(amount)`: Converts numeric values into Indian Rupee strings using `en-IN` format (e.g., `₹3,499`).
+   - `generateOrderId()`: Produces random alphanumeric order tracking IDs with the `MRD-` prefix (e.g. `MRD-7K2X9P`).
+   - `cn(...inputs)`: Safe Tailwind class name joining via `clsx` and `tailwind-merge`.
+8. **`src/lib/constants.js`**
+   - Defines `CATEGORIES`, `SORT_OPTIONS`, active `PROMO_CODES` (`INDIA20`, `FIRST10`, `FESTIVE500`), `FREE_SHIPPING_THRESHOLD` (₹1,499), `STANDARD_SHIPPING_COST` (₹99), `ESTIMATED_GST_RATE` (18%), and `INDIAN_STATES`.
+9. **`src/data/products.js`**
+   - Curated list of 12 high-demand products across Electronics, Footwear, Apparel, and Accessories with realistic Rupee prices, specs, BIS certification tags, and photography.
 
 ### Storage Hooks & State Management
-9. **`src/hooks/useLocalStorage.js`**
-   - Encapsulates safe interaction with `window.localStorage`.
-   - Protects against browser quota exceptions or private browsing restrictions with `try/catch`.
-   - Dispatches a custom `local-storage-change` event and listens to the native `storage` event to ensure state stays synchronized across multiple tabs and components.
-10. **`src/hooks/useSessionStorage.js`**
-    - Interacts safely with `window.sessionStorage`.
-    - Guarantees data isolation within the active tab/session and automatic garbage collection when the tab is closed.
-11. **`src/context/ThemeContext.jsx`**
-    - Manages dark/light theme state, syncs changes to `localStorage` (`aura-theme`), checks the OS `prefers-color-scheme`, and toggles the `.dark` CSS class on `document.documentElement`.
-12. **`src/context/StoreContext.jsx`**
-    - The central state hub of the application:
-      - Combines cart and wishlist state via `useLocalStorage`.
-      - Manages recently viewed products and active filters via `useSessionStorage`.
-      - Computes cart quantities, subtotals, promo discounts, shipping qualifications, taxes, and final totals.
-      - Dispatches temporary UI notifications via a built-in Toast queue.
-      - Coordinates order placement and clears the cart on checkout completion.
+10. **`src/hooks/useLocalStorage.js`**
+    - Safe interface for `window.localStorage` with `try/catch` fallbacks, functional updates, and cross-tab event synchronization via `window.addEventListener('storage')`.
+11. **`src/hooks/useSessionStorage.js`**
+    - Interacts safely with `window.sessionStorage` for temporary, tab-scoped data.
+12. **`src/context/ThemeContext.jsx`**
+    - Manages dark and light modes, persists choice in `localStorage`, and handles OS system preference defaults.
+13. **`src/context/StoreContext.jsx`**
+    - Central hub combining cart, wishlist, recently viewed items, filter states, toast alerts, and completed order history.
 
-### Common UI Components
-13. **`src/components/common/Button.jsx`**
-    - Reusable button supporting 6 variants (`default`, `secondary`, `outline`, `ghost`, `destructive`, `link`), multiple sizes, built-in loading spinners, and press scale transitions.
-14. **`src/components/common/Badge.jsx`**
-    - Pill badge component for product labels (`Bestseller`, `Sale`, `New Release`, `Limited Stock`).
-15. **`src/components/common/Modal.jsx`**
-    - Dialog container featuring backdrop blur, automatic body scroll locking, and dismissal via keyboard `Escape` or backdrop click.
-16. **`src/components/common/Drawer.jsx`**
-    - Slide-over panel component from the right viewport edge, used for the Cart and Wishlist interfaces.
-17. **`src/components/common/StarRating.jsx`**
-    - Visual star rating component supporting partial star fills, numeric scores, and review count indicators.
-18. **`src/components/common/Toast.jsx`**
-    - Floating animated notifications that appear upon adding items to the cart, updating the wishlist, or applying discount codes.
-
-### Layout & Page Components
-19. **`src/components/layout/AnnouncementBar.jsx`**
-    - Top ribbon displaying discount code prompts and real-time distance from the free shipping threshold.
-20. **`src/components/layout/Navbar.jsx`**
-    - Sticky glassmorphic navigation bar with store branding, live search bar with `/` keyboard focus shortcut, desktop category navigation, theme toggle, wishlist count badge, and cart trigger badge.
-21. **`src/components/layout/Hero.jsx`**
-    - Editorial hero section highlighting key store value propositions and primary call-to-action buttons.
-22. **`src/components/layout/MobileNav.jsx`**
-    - Bottom fixed dock navigation providing mobile smartphone users with one-tap access to Home, Catalog, Wishlist, and Cart.
-23. **`src/components/layout/Footer.jsx`**
-    - Clean footer with value guarantees (30-day returns, 2-year warranty, carbon-neutral delivery), newsletter subscription form, and technical stack details.
-
-### Product Catalog Components
-24. **`src/components/products/ProductCard.jsx`**
-    - Product card showcasing smooth image zoom transitions, top badges, wishlist toggle heart, quick inspect button, star ratings, stock warnings, and an instant add-to-cart button.
-25. **`src/components/products/ProductGrid.jsx`**
-    - Responsive product grid with an empty state fallback when no items match active filter criteria.
-26. **`src/components/products/FilterBar.jsx`**
-    - Filter controls including category tabs, search query tag, price range slider ($50–$600), in-stock toggle, and sort dropdown.
-27. **`src/components/products/QuickViewModal.jsx`**
-    - Inspection modal with image gallery thumbnails, product descriptions, variant selectors (sizes and colors), inventory-bounded quantity counter, and technical specs table.
-28. **`src/components/products/RecentlyViewed.jsx`**
-    - Displays products inspected during the current browsing session retrieved from `sessionStorage`.
-
-### Cart, Wishlist & Checkout Components
-29. **`src/components/cart/CartDrawer.jsx`**
-    - Slide-over drawer with the list of cart items, shipping goal meter, promo code applicator, subtotal breakdown, empty cart state, and checkout action.
-30. **`src/components/cart/CartItem.jsx`**
-    - Cart row item with product thumbnail, variant labels, quantity stepper bounded by inventory, and item removal button.
-31. **`src/components/wishlist/WishlistDrawer.jsx`**
-    - Slide-over drawer for saved items with options to move items individually or entirely into the cart.
-32. **`src/components/checkout/CheckoutModal.jsx`**
-    - Interactive checkout flow with shipping address fields, simulated payment methods, order total review, processing delay simulation, and a celebratory confetti animation (`canvas-confetti`) with an official order receipt.
+### Components
+14. **`src/components/ui/button.jsx`**: Official shadcn/ui Button using `@radix-ui/react-slot` and `class-variance-authority`.
+15. **`src/components/ui/badge.jsx`**: Official shadcn/ui Badge using `class-variance-authority`.
+16. **`src/components/ui/card.jsx`**: Official shadcn/ui Card primitives (`Card`, `CardHeader`, `CardTitle`, `CardContent`, `CardFooter`).
+17. **`src/components/reactbits/SpotlightCard.jsx`**: React Bits Spotlight Card that tracks cursor coordinates with dynamic radial gold illumination.
+18. **`src/components/reactbits/ShinyText.jsx`**: React Bits continuous shimmering headline gradient wave.
+19. **`src/components/reactbits/AnimatedContent.jsx`**: React Bits Framer Motion spring physics entrance container.
+20. **`src/components/common/Modal.jsx`**: Accessible dialog container with backdrop blur and body scroll lock.
+21. **`src/components/common/Drawer.jsx`**: Slide-over panel component from right edge.
+22. **`src/components/common/StarRating.jsx`**: Star rating with fractional star rendering.
+23. **`src/components/common/Toast.jsx`**: Floating animated notification toasts.
+24. **`src/components/layout/AnnouncementBar.jsx`**: Top ribbon with shipping target and festive coupon prompts.
+25. **`src/components/layout/Navbar.jsx`**: Wide search bar, Golden Orbital M Emblem, and category sub-nav.
+26. **`src/components/layout/Hero.jsx`**: Editorial hero section with React Bits `ShinyText` and `AnimatedContent`.
+27. **`src/components/layout/MobileNav.jsx`**: Bottom fixed dock navigation for mobile smartphones.
+28. **`src/components/layout/Footer.jsx`**: Footer with courier partners, payment methods, and GST invoice info.
+29. **`src/components/products/ProductCard.jsx`**: Memoized `SpotlightCard` with image zoom, wishlist heart, quick view, and add-to-cart button.
+30. **`src/components/products/ProductGrid.jsx`**: Responsive 2-column mobile and 4-column desktop grid.
+31. **`src/components/products/FilterBar.jsx`**: Filter controls with Rupee price range slider and sort dropdown.
+32. **`src/components/products/QuickViewModal.jsx`**: Inspection modal with image gallery, specs, and variant selectors.
+33. **`src/components/products/RecentlyViewed.jsx`**: Displays products inspected during the current browsing session.
+34. **`src/components/cart/CartDrawer.jsx`**: Slide-over cart with free shipping bar, coupons, and checkout CTA.
+35. **`src/components/cart/CartItem.jsx`**: Individual cart item row with quantity stepper.
+36. **`src/components/wishlist/WishlistDrawer.jsx`**: Slide-over wishlist with move-to-cart actions.
+37. **`src/components/checkout/CheckoutModal.jsx`**: Indian address validation, UPI/RuPay/COD payment options, and confetti celebration receipt.
 
 ---
 
 ## 🎓 Project Explanation Guide (For Presentations & Reviews)
 
-Use this section to clearly explain the architectural decisions, data flow, and storage choices behind the project.
-
 ### 1. Where each part comes from
-
-- **shadcn/ui Design Philosophy:**
-  Rather than relying on a heavy third-party component library with rigid styling, the UI components (`Button`, `Badge`, `Modal`, `Drawer`) follow the shadcn/ui pattern: accessible, headless building blocks styled with Tailwind CSS utility classes and CSS custom property color tokens (`hsl(var(--primary))`).
-- **React Bits Micro-Interactions:**
-  Card hover transforms, subtle active press scales (`active:scale-[0.98]`), backdrop blurs (`backdrop-blur-md`), and celebratory canvas particles deliver a modern, high-polish user feel.
-- **Lucide Icons:**
-  Standardized iconography across the application for visual consistency.
-- **Single Source of Truth Mock Data:**
-  Products in `src/data/products.js` emulate a real backend API response, containing unique IDs, categories, descriptions, variant arrays, pricing, stock levels, and technical specification objects.
-
----
+- **Professional Brand Positioning:** **MERIDIAN** with the **Golden Orbital M Emblem**, communicating trust, precision, and longevity.
+- **shadcn/ui Architecture:** Real headless Radix UI components (`@radix-ui/react-slot`) composed with `class-variance-authority` in `src/components/ui/`.
+- **React Bits Micro-Interactions:** Mouse-tracking `SpotlightCard`, shimmering `ShinyText`, and Framer Motion spring physics via `AnimatedContent`.
 
 ### 2. How data flows between components
-
-```mermaid
-flowchart TD
-    subgraph Storage ["Browser Web Storage"]
-        LS[("LocalStorage\n• Shopping Cart\n• Wishlist\n• Orders\n• Theme")]
-        SS[("SessionStorage\n• Recently Viewed\n• Active Filters")]
-    end
-
-    subgraph Hooks ["Custom Hooks"]
-        uLS["useLocalStorage()"]
-        uSS["useSessionStorage()"]
-    end
-
-    LS <--> uLS
-    SS <--> uSS
-
-    subgraph Context ["Global State Providers"]
-        SC["StoreContext\n(Cart, Wishlist, Filters, Toasts)"]
-        TC["ThemeContext\n(Light / Dark)"]
-    end
-
-    uLS --> SC
-    uSS --> SC
-    uLS --> TC
-
-    subgraph UI ["Component Tree"]
-        Nav["Navbar & MobileNav"]
-        Hero["Hero Section"]
-        Filters["FilterBar"]
-        Grid["ProductGrid & ProductCard"]
-        QuickView["QuickViewModal"]
-        Cart["CartDrawer & CartItem"]
-        Wishlist["WishlistDrawer"]
-        Checkout["CheckoutModal"]
-        Recent["RecentlyViewed"]
-        Toaster["ToastContainer"]
-    end
-
-    SC --> Nav
-    SC --> Filters
-    SC --> Grid
-    SC --> QuickView
-    SC --> Cart
-    SC --> Wishlist
-    SC --> Checkout
-    SC --> Recent
-    SC --> Toaster
-    TC --> Nav
-```
-
-1. **Top-Level Providers:**
-   `App.jsx` wraps the application tree inside `ThemeProvider` and `StoreProvider`.
-2. **Context Consumers:**
-   Components call the custom hook `useStore()` to access state and action dispatchers:
-   - `Navbar` reads `cartCount`, `wishlistCount`, and `subtotal`.
-   - `FilterBar` dispatches filter updates (`category`, `searchQuery`, `maxPrice`, `sortBy`) to `StoreContext`.
-   - `App.jsx` performs memoized filtering (`useMemo`) over the product catalog based on active filter criteria.
-   - `ProductCard` and `QuickViewModal` dispatch actions such as `addToCart`, `toggleWishlist`, and `recordProductView`.
-   - `CartDrawer` updates quantities, validates promo codes, and forwards the customer to `CheckoutModal`.
-   - `CheckoutModal` processes the simulated transaction, generates a unique order reference, writes to the order history, and clears the cart.
-
----
+- Top-level `App.jsx` mounts `ThemeProvider` and `StoreProvider`.
+- Components consume `useStore()` hook for read and dispatch operations.
+- Dynamic filtering runs in `App.jsx` using `useMemo` and `useDeferredValue` over category, price, and tokenized query criteria.
+- State is synchronized to browser storage using custom hooks (`useLocalStorage`, `useSessionStorage`).
 
 ### 3. Why specific storage choices were made
 
-One of the key technical decisions in this application is the deliberate separation between **LocalStorage** and **SessionStorage**:
-
-| Feature | Storage Medium | Architectural Rationale |
+| Feature | Storage Choice | Architectural Rationale |
 | :--- | :--- | :--- |
-| **Shopping Cart** | `localStorage` | **High Commercial Value & Purchase Intent.** A user expects items added to their cart to remain there when returning hours or days later, or after an accidental tab close or page reload. |
-| **Wishlist** | `localStorage` | **Long-Term Collection.** Wishlisted items represent customer aspirational interest that should persist across sessions until deliberately removed or purchased. |
-| **Order History** | `localStorage` | **Receipt Verification.** Preserves simulated order confirmations and receipts so customers can reference their transaction history across visits. |
-| **Color Theme** | `localStorage` | **User Interface Preference.** Remembers whether the user preferred dark mode or light mode across visits. |
-| **Recently Viewed** | `sessionStorage` | **Context-Specific to Current Browsing Session.** Recently viewed items are relevant to the immediate search journey. Storing them in `sessionStorage` avoids unbounded storage growth, respects privacy on shared devices, and cleans up automatically when the tab closes. |
-| **Active Filters & Search** | `sessionStorage` | **Session Continuity Without Stale Traps.** Persisting filters in `sessionStorage` prevents losing filter configurations on page refreshes while ensuring that opening the website in a fresh tab starts with a clean catalog view. |
-
----
-
-### 4. State management architecture & edge-case safety
-
-1. **Safe Serialization & Deserialization:**
-   `useLocalStorage` and `useSessionStorage` wrap all `JSON.parse` and `JSON.stringify` calls inside `try/catch` blocks. If storage contains corrupt data or is blocked by Safari Private Browsing mode, the hooks fall back to the provided `initialValue` without crashing the application.
-2. **Cross-Tab Synchronization:**
-   The `useLocalStorage` hook listens to the window `storage` event. If a customer modifies their cart or wishlist in Tab A, Tab B updates its state immediately.
-3. **Inventory Clamping:**
-   Both `addToCart` and `updateCartQuantity` enforce upper bounds using `product.stock`. A user cannot increment a quantity beyond the available stock limit.
-4. **Derived Computations via `useMemo`:**
-   Cart subtotal, discount amounts, shipping qualifications, and tax calculations are derived dynamically using `useMemo`. This prevents stale state desynchronization and unnecessary re-renders.
+| **Shopping Cart** | `localStorage` | **High Purchase Intent.** Customer cart items persist across accidental tab closures, reloads, and returning visits. |
+| **Wishlist** | `localStorage` | **Long-Term Collection.** Saved items remain preserved across days and weeks until explicitly removed. |
+| **Order Receipts** | `localStorage` | **Order Verification.** Users can retain simulated order records and transaction IDs locally. |
+| **Recently Viewed** | `sessionStorage` | **Session-Scoped Journey.** Automatically cleared when the browser tab is closed to prevent unbounded storage bloat and protect privacy. |
+| **Active Filters** | `sessionStorage` | **Navigation Comfort Without Stale Traps.** Users retain filter context upon accidental page refresh without locking new browser windows into old search states. |
 
 ---
 
 ## 💻 Getting Started & Local Development
 
-### Prerequisites
-- **Node.js**: Version 18.x or 20.x or higher
-- **npm**: Version 9.x or higher
-
-### Installation & Run
-
-1. Clone or navigate to the repository directory:
+1. Navigate to the project root:
    ```bash
    cd /home/blaze/Documents/Ecom
    ```
@@ -369,14 +288,13 @@ One of the key technical decisions in this application is the deliberate separat
    ```bash
    npm run dev
    ```
-   Open your browser to the local URL (typically `http://localhost:3000` or `http://localhost:5173`).
 
 4. Build for production:
    ```bash
    npm run build
    ```
 
-5. Preview production build locally:
+5. Preview the production build:
    ```bash
    npm run preview
    ```
@@ -384,6 +302,6 @@ One of the key technical decisions in this application is the deliberate separat
 ---
 
 ## 🏷️ Test Coupons for Evaluation
-- `AURA20`: 20% discount on any order size
-- `WELCOME10`: 10% welcome discount
-- `VIP50`: $50 flat discount on orders over $200
+- `INDIA20`: 20% festive discount on all orders
+- `FIRST10`: 10% welcome discount
+- `FESTIVE500`: Flat ₹500 off on orders above ₹2,999

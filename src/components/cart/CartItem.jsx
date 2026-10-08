@@ -1,7 +1,7 @@
 import React from "react"
 import { Plus, Minus, Trash2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
-import { formatCurrency } from "../../lib/utils"
+import { formatCurrency, handleImageFallback } from "../../lib/utils"
 
 export function CartItem({ item }) {
   const { updateCartQuantity, removeFromCart } = useStore()
@@ -14,6 +14,7 @@ export function CartItem({ item }) {
         <img
           src={product.images[0]}
           alt={product.name}
+          onError={handleImageFallback}
           className="h-full w-full object-cover object-center"
         />
       </div>

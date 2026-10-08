@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react"
+import React, { useMemo, useRef, useDeferredValue } from "react"
 import { PRODUCTS } from "./data/products"
 import { StoreProvider, useStore } from "./context/StoreContext"
 import { ThemeProvider } from "./context/ThemeContext"
@@ -20,11 +20,20 @@ function StoreContent() {
   const { filters } = useStore()
   const catalogRef = useRef(null)
 
+  // Performance optimization: useDeferredValue keeps input typing silky smooth at 60fps
+  const deferredSearchQuery = useDeferredValue(filters.searchQuery)
+
   const scrollToCatalog = () => {
     catalogRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  // Filter & sort products with React useMemo
+  // Pre-compile search tokens for fast matching
+  const queryTokens = useMemo(() => {
+    if (!deferredSearchQuery.trim()) return []
+    return deferredSearchQuery.toLowerCase().trim().split(/\s+/)
+  }, [deferredSearchQuery])
+
+  // Filter & sort products with React useMemo & deferred search query
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((product) => {
       // Category filter
@@ -42,19 +51,14 @@ function StoreContent() {
         return false
       }
 
-      // Search query filter (matches name, description, category, and specs)
-      if (filters.searchQuery.trim()) {
-        const query = filters.searchQuery.toLowerCase().trim()
-        const matchesName = product.name.toLowerCase().includes(query)
-        const matchesTagline = product.tagline.toLowerCase().includes(query)
-        const matchesDesc = product.description.toLowerCase().includes(query)
-        const matchesCategory = product.category.toLowerCase().includes(query)
-        const matchesSpecs = product.specs?.some(
-          (s) => s.label.toLowerCase().includes(query) || s.value.toLowerCase().includes(query)
-        )
-        if (!matchesName && !matchesTagline && !matchesDesc && !matchesCategory && !matchesSpecs) {
-          return false
-        }
+      // High-performance tokenized multi-field search
+      if (queryTokens.length > 0) {
+        const searchableContent = `${product.name} ${product.tagline} ${product.description} ${product.category} ${
+          product.specs ? product.specs.map((s) => `${s.label} ${s.value}`).join(" ") : ""
+        }`.toLowerCase()
+
+        const matchesAllTokens = queryTokens.every((token) => searchableContent.includes(token))
+        if (!matchesAllTokens) return false
       }
 
       return true
@@ -73,7 +77,7 @@ function StoreContent() {
           return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
       }
     })
-  }, [filters])
+  }, [filters.category, filters.maxPrice, filters.inStockOnly, filters.sortBy, queryTokens])
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans transition-colors">
@@ -83,7 +87,7 @@ function StoreContent() {
       <main className="flex-1">
         <Hero onExploreClick={scrollToCatalog} />
 
-        <div ref={catalogRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
+        <div ref={catalogRef} className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-14 sm:pb-16">
           <FilterBar totalResults={filteredProducts.length} />
           <ProductGrid products={filteredProducts} />
           <RecentlyViewed />

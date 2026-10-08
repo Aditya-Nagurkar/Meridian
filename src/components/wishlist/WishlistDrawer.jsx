@@ -1,9 +1,9 @@
 import React from "react"
-import { Heart, ShoppingBag, Trash2, ArrowRight } from "lucide-react"
+import { Heart, ShoppingBag, Trash2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Drawer } from "../common/Drawer"
-import { Button } from "../common/Button"
-import { formatCurrency } from "../../lib/utils"
+import { Button } from "../ui/button"
+import { formatCurrency, handleImageFallback } from "../../lib/utils"
 
 export function WishlistDrawer() {
   const {
@@ -74,6 +74,7 @@ export function WishlistDrawer() {
                 <img
                   src={product.images[0]}
                   alt={product.name}
+                  onError={handleImageFallback}
                   className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
