@@ -98,3 +98,183 @@
   background-size: 24px 24px;
   background-image: radial-gradient(circle, hsl(var(--muted-foreground) / 0.12) 1px, transparent 1px);
 }
+
+/* ============================================================= */
+/* HARDWARE-ACCELERATED DRAWER & MODAL ANIMATIONS               */
+/* ============================================================= */
+
+/* Sheet / Drawer Backdrop (Cart & Wishlist) */
+.sheet-overlay[data-state='open'] {
+  animation: sheetFadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.sheet-overlay[data-state='closed'] {
+  animation: sheetFadeOut 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Sheet / Drawer Content (Right Slide-over) */
+.sheet-content-right[data-state='open'] {
+  animation: sheetSlideInRight 360ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+.sheet-content-right[data-state='closed'] {
+  animation: sheetSlideOutRight 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+
+/* Sheet / Drawer Content (Bottom Slide-over) */
+.sheet-content-bottom[data-state='open'] {
+  animation: sheetSlideInBottom 360ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+.sheet-content-bottom[data-state='closed'] {
+  animation: sheetSlideOutBottom 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+
+/* Sheet / Drawer Content (Left Slide-over) */
+.sheet-content-left[data-state='open'] {
+  animation: sheetSlideInLeft 360ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+.sheet-content-left[data-state='closed'] {
+  animation: sheetSlideOutLeft 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+
+/* Modal Dialog Backdrop (QuickView & Checkout) */
+.dialog-overlay[data-state='open'] {
+  animation: sheetFadeIn 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.dialog-overlay[data-state='closed'] {
+  animation: sheetFadeOut 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Modal Dialog Content (Responsive: slide-up on mobile, spring scale-in on desktop) */
+.dialog-content[data-state='open'] {
+  animation: dialogOpenResponsive 340ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+.dialog-content[data-state='closed'] {
+  animation: dialogCloseResponsive 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes sheetFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes sheetFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes sheetSlideInRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes sheetSlideOutRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes sheetSlideInLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes sheetSlideOutLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes sheetSlideInBottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetSlideOutBottom {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Desktop Modal Open / Close: Scale + slight Y offset */
+@keyframes dialogOpenResponsive {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dialogCloseResponsive {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+}
+
+/* Mobile Modal Open / Close: Smooth bottom sheet slide */
+@media (max-width: 639px) {
+  @keyframes dialogOpenResponsive {
+    0% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes dialogCloseResponsive {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+  }
+}

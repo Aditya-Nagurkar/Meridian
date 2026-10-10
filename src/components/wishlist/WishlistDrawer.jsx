@@ -35,6 +35,7 @@ export function WishlistDrawer() {
       title="Saved Wishlist"
       countBadge={`${wishlist.length} saved`}
       subtitle="Items saved in your browser's LocalStorage"
+      activeNavTab="wishlist"
       footer={
         wishlist.length > 0 ? (
           <div className="space-y-3">
@@ -57,11 +58,11 @@ export function WishlistDrawer() {
       }
     >
       {wishlist.length > 0 ? (
-        <div className="divide-y divide-border/60">
+        <div className="space-y-3">
           {wishlist.map((product) => (
             <div
               key={product.id}
-              className="flex gap-4 py-4 items-center group"
+              className="p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card/90 text-card-foreground shadow-sm hover:border-primary/40 transition-all flex gap-3.5 items-start group"
             >
               <div
                 onClick={() => {
@@ -69,7 +70,7 @@ export function WishlistDrawer() {
                   setQuickViewProduct(product)
                   setIsWishlistOpen(false)
                 }}
-                className="h-20 w-20 flex-shrink-0 rounded-xl overflow-hidden bg-muted/30 border border-border cursor-pointer"
+                className="h-20 w-20 sm:h-22 sm:w-22 flex-shrink-0 rounded-xl overflow-hidden bg-muted/40 border border-border/80 cursor-pointer"
               >
                 <img
                   src={product.images[0]}
@@ -80,8 +81,8 @@ export function WishlistDrawer() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <span className="text-[10px] uppercase font-mono text-muted-foreground block">
-                  {product.category}
+                <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground block font-medium">
+                  {product.categoryLabel || product.category}
                 </span>
                 <h4
                   onClick={() => {
@@ -89,25 +90,25 @@ export function WishlistDrawer() {
                     setQuickViewProduct(product)
                     setIsWishlistOpen(false)
                   }}
-                  className="text-sm font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors"
+                  className="text-xs sm:text-sm font-bold text-foreground line-clamp-2 cursor-pointer hover:text-primary transition-colors leading-snug mt-0.5"
                 >
                   {product.name}
                 </h4>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-sm font-bold text-foreground">
+                  <span className="text-xs sm:text-sm font-extrabold text-foreground font-mono">
                     {formatCurrency(product.price)}
                   </span>
                   {product.originalPrice && (
-                    <span className="text-xs text-muted-foreground line-through">
+                    <span className="text-[10px] text-muted-foreground line-through font-mono">
                       {formatCurrency(product.originalPrice)}
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-2.5">
                   <button
                     onClick={() => handleMoveToCart(product)}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-all active:scale-95"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-all active:scale-95 shadow-sm"
                   >
                     <ShoppingBag className="h-3 w-3" />
                     <span>Move to Cart</span>
@@ -115,8 +116,9 @@ export function WishlistDrawer() {
 
                   <button
                     onClick={() => toggleWishlist(product)}
-                    className="p-1 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-muted transition-colors"
+                    className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                     aria-label="Remove from wishlist"
+                    title="Remove item"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>

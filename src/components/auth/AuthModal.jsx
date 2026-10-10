@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react"
-import { Lock, Mail, User, Phone, Sparkles, CheckCircle2 } from "lucide-react"
+import { Lock, Mail, User, Phone, Sparkles, AlertCircle } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Modal } from "../common/Modal"
 import { Input } from "../ui/input"
-import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar"
+import { Alert, AlertDescription } from "../ui/alert"
+import { Field, FieldLabel, FieldError } from "../ui/field"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs"
 import mockUsers from "../../data/users.json"
 
@@ -32,6 +34,8 @@ export function AuthModal() {
   const [regPassword, setRegPassword] = useState("")
   const [regError, setRegError] = useState("")
 
+  if (user) return null
+
   const handleLoginSubmit = (e) => {
     e.preventDefault()
     setLoginError("")
@@ -50,16 +54,17 @@ export function AuthModal() {
     }
   }
 
-  const handleQuickDemoLogin = (user) => {
-    setLoginEmail(user.email)
-    setLoginPassword(user.password)
-    login(user.email, user.password)
+  const handleQuickDemoLogin = (demoUser) => {
+    setLoginEmail(demoUser.email)
+    setLoginPassword(demoUser.password)
+    login(demoUser.email, demoUser.password)
   }
 
   return (
     <Modal
       isOpen={isAuthOpen}
       onClose={() => setIsAuthOpen(false)}
+      activeNavTab="account"
       maxWidth="max-w-md"
       showCloseButton={true}
     >
@@ -87,8 +92,8 @@ export function AuthModal() {
           {/* SIGN IN TAB */}
           <TabsContent value="signin" className="space-y-4">
             <form onSubmit={handleLoginSubmit} className="space-y-3.5">
-              <div className="space-y-1.5">
-                <Label htmlFor="login-email">Email Address</Label>
+              <Field>
+                <FieldLabel htmlFor="login-email">Email Address</FieldLabel>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -101,11 +106,11 @@ export function AuthModal() {
                     required
                   />
                 </div>
-              </div>
+              </Field>
 
-              <div className="space-y-1.5">
+              <Field>
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="login-password">Password</Label>
+                  <FieldLabel htmlFor="login-password">Password</FieldLabel>
                   <span className="text-[11px] text-muted-foreground">Demo: password123</span>
                 </div>
                 <div className="relative">
@@ -120,10 +125,13 @@ export function AuthModal() {
                     required
                   />
                 </div>
-              </div>
+              </Field>
 
               {loginError && (
-                <p className="text-xs text-red-500 font-medium">{loginError}</p>
+                <Alert variant="destructive" className="py-2.5">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-xs">{loginError}</AlertDescription>
+                </Alert>
               )}
 
               <Button type="submit" className="w-full font-bold shadow-md">
@@ -147,11 +155,12 @@ export function AuthModal() {
                     className="w-full flex items-center justify-between p-2.5 rounded-xl border border-border/80 bg-muted/30 hover:bg-muted/70 transition-all text-left group"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <img
-                        src={u.avatar}
-                        alt={u.name}
-                        className="h-7 w-7 rounded-full object-cover border border-border"
-                      />
+                      <Avatar className="h-7 w-7 border border-border">
+                        <AvatarImage src={u.avatar} alt={u.name} />
+                        <AvatarFallback className="text-[10px] font-bold">
+                          {u.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="truncate">
                         <div className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
                           {u.name}
@@ -173,8 +182,8 @@ export function AuthModal() {
           {/* CREATE ACCOUNT TAB */}
           <TabsContent value="register" className="space-y-3.5">
             <form onSubmit={handleRegisterSubmit} className="space-y-3">
-              <div className="space-y-1">
-                <Label htmlFor="reg-name">Full Name</Label>
+              <Field>
+                <FieldLabel htmlFor="reg-name">Full Name</FieldLabel>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -187,10 +196,10 @@ export function AuthModal() {
                     required
                   />
                 </div>
-              </div>
+              </Field>
 
-              <div className="space-y-1">
-                <Label htmlFor="reg-email">Email Address</Label>
+              <Field>
+                <FieldLabel htmlFor="reg-email">Email Address</FieldLabel>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -203,10 +212,10 @@ export function AuthModal() {
                     required
                   />
                 </div>
-              </div>
+              </Field>
 
-              <div className="space-y-1">
-                <Label htmlFor="reg-phone">Phone Number (+91)</Label>
+              <Field>
+                <FieldLabel htmlFor="reg-phone">Phone Number (+91)</FieldLabel>
                 <div className="relative">
                   <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -218,10 +227,10 @@ export function AuthModal() {
                     className="pl-9"
                   />
                 </div>
-              </div>
+              </Field>
 
-              <div className="space-y-1">
-                <Label htmlFor="reg-password">Password (min 6 chars)</Label>
+              <Field>
+                <FieldLabel htmlFor="reg-password">Password (min 6 chars)</FieldLabel>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -234,10 +243,13 @@ export function AuthModal() {
                     required
                   />
                 </div>
-              </div>
+              </Field>
 
               {regError && (
-                <p className="text-xs text-red-500 font-medium">{regError}</p>
+                <Alert variant="destructive" className="py-2.5">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-xs">{regError}</AlertDescription>
+                </Alert>
               )}
 
               <Button type="submit" className="w-full font-bold shadow-md mt-2">

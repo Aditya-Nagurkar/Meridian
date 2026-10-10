@@ -36,6 +36,12 @@ export function useStore() {
   const freeShippingProgress = Math.min(100, Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100))
 
   return {
+    // Live Products (DummyJSON API)
+    products: store.products,
+    isLoadingProducts: store.isLoadingProducts,
+    productsError: store.productsError,
+    fetchProducts: store.fetchProducts,
+
     // Cart
     cart,
     addToCart: store.addToCart,
@@ -96,7 +102,7 @@ export function useStore() {
     removeToast: store.removeToast,
 
     // Orders
-    orders: store.orders,
+    orders: Array.isArray(store.orders) ? store.orders : [],
     completeOrder: (orderDetails) => store.createOrder(orderDetails),
     createOrder: store.createOrder,
   }

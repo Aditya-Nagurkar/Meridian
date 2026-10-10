@@ -48,7 +48,7 @@ export function RecentlyViewed() {
             </div>
 
             <span className="text-[9px] uppercase font-mono text-muted-foreground truncate">
-              {item.category}
+              {item.categoryLabel || item.category}
             </span>
             <h4 className="text-xs font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
               {item.name}

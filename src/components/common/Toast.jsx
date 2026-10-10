@@ -1,6 +1,7 @@
 import React from "react"
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
+import { Toast } from "../ui/toast"
 import { cn } from "../../lib/utils"
 
 export function ToastContainer() {
@@ -15,30 +16,25 @@ export function ToastContainer() {
         const isError = toast.type === "error"
 
         return (
-          <div
+          <Toast
             key={toast.id}
-            className={cn(
-              "pointer-events-auto flex items-center justify-between gap-3 rounded-xl border p-4 shadow-xl backdrop-blur-md transition-all animate-slide-up",
-              isSuccess && "bg-card/95 border-emerald-500/30 text-card-foreground shadow-emerald-500/5",
-              isError && "bg-card/95 border-red-500/30 text-card-foreground shadow-red-500/5",
-              !isSuccess && !isError && "bg-card/95 border-border text-card-foreground"
-            )}
-            role="status"
+            variant={isSuccess ? "success" : isError ? "destructive" : "default"}
+            className="animate-slide-up"
           >
             <div className="flex items-center gap-3">
-              {isSuccess && <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />}
-              {isError && <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />}
-              {!isSuccess && !isError && <Info className="h-5 w-5 text-blue-500 flex-shrink-0" />}
-              <p className="text-sm font-medium">{toast.message}</p>
+              {isSuccess && <CheckCircle2 className="h-5 w-5 text-emerald-400 flex-shrink-0" />}
+              {isError && <AlertCircle className="h-5 w-5 text-red-300 flex-shrink-0" />}
+              {!isSuccess && !isError && <Info className="h-5 w-5 text-blue-400 flex-shrink-0" />}
+              <p className="text-sm font-medium leading-snug">{toast.message}</p>
             </div>
             <button
               onClick={() => removeToast(toast.id)}
-              className="rounded-md p-1 text-muted-foreground hover:text-foreground transition-colors"
+              className="rounded-md p-1 opacity-70 hover:opacity-100 transition-opacity ml-2 flex-shrink-0"
               aria-label="Dismiss notification"
             >
               <X className="h-4 w-4" />
             </button>
-          </div>
+          </Toast>
         )
       })}
     </div>

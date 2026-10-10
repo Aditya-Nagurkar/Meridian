@@ -1,6 +1,7 @@
 import React from "react"
 import { SlidersHorizontal, RotateCcw } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
+import { Slider } from "../ui/slider"
 import { CATEGORIES, SORT_OPTIONS } from "../../lib/constants"
 import { formatCurrency, cn } from "../../lib/utils"
 
@@ -11,7 +12,7 @@ export function FilterBar({ totalResults }) {
     filters.category !== "all" ||
     filters.searchQuery !== "" ||
     filters.sortBy !== "featured" ||
-    filters.maxPrice < 10000 ||
+    filters.maxPrice < 150000 ||
     filters.inStockOnly
 
   return (
@@ -92,20 +93,20 @@ export function FilterBar({ totalResults }) {
           </label>
 
           {/* Price Range Filter Slider in Rupees */}
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-muted-foreground">Max:</span>
-            <span className="font-semibold text-foreground font-mono">
+          <div className="flex items-center gap-2.5 text-xs">
+            <span className="text-muted-foreground whitespace-nowrap">Max:</span>
+            <span className="font-semibold text-foreground font-mono whitespace-nowrap">
               {formatCurrency(filters.maxPrice)}
             </span>
-            <input
-              type="range"
-              min="1500"
-              max="10000"
-              step="500"
-              value={filters.maxPrice}
-              onChange={(e) => updateFilter("maxPrice", Number(e.target.value))}
-              className="w-20 sm:w-28 accent-primary cursor-pointer"
-            />
+            <div className="w-20 sm:w-28 flex items-center">
+              <Slider
+                value={[filters.maxPrice]}
+                min={500}
+                max={150000}
+                step={1000}
+                onValueChange={([val]) => updateFilter("maxPrice", val)}
+              />
+            </div>
           </div>
 
           {/* Sort Dropdown */}

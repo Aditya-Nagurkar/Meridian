@@ -1,9 +1,11 @@
 import React, { useState } from "react"
-import { ShoppingBag, ArrowRight, Tag, X, Sparkles, Trash2 } from "lucide-react"
+import { ShoppingBag, ArrowRight, Tag, X, Sparkles, Trash2, CheckCircle2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Drawer } from "../common/Drawer"
 import { CartItem } from "./CartItem"
 import { Button } from "../ui/button"
+import { Progress } from "../ui/progress"
+import { Alert, AlertDescription } from "../ui/alert"
 import { formatCurrency } from "../../lib/utils"
 
 export function CartDrawer() {
@@ -51,42 +53,53 @@ export function CartDrawer() {
       onClose={() => setIsCartOpen(false)}
       title="Shopping Cart"
       countBadge={`${cartCount} items`}
-      subtitle={
-        freeShippingRemaining > 0
-          ? `Add ${formatCurrency(freeShippingRemaining)} more for complimentary All-India express delivery`
-          : "🎉 You have unlocked Free Pan-India Express Delivery!"
+      activeNavTab="cart"
+      banner={
+        <div className="px-5 py-2.5 bg-muted/40 border-b border-border/60">
+          <div className="flex items-center justify-between text-xs font-medium mb-1">
+            <span className="flex items-center gap-1.5 text-foreground font-semibold">
+              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+              {freeShippingRemaining > 0
+                ? `Add ${formatCurrency(freeShippingRemaining)} for Free Delivery`
+                : "🎉 Free Pan-India Delivery Unlocked!"}
+            </span>
+            <span className="text-[11px] text-muted-foreground font-mono font-semibold">
+              {freeShippingProgress}%
+            </span>
+          </div>
+          <Progress value={freeShippingProgress} className="h-1.5" />
+        </div>
       }
       footer={
         cart.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Promo Code Form */}
             {!appliedPromo ? (
               <form onSubmit={handleApplyPromo} className="space-y-1">
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <Tag className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Tag className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                     <input
                       type="text"
-                      placeholder="Coupon code (e.g. INDIA20)"
+                      placeholder="PROMO CODE (e.g. INDIA20)"
                       value={promoInput}
                       onChange={(e) => setPromoInput(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-xs uppercase font-mono rounded-xl bg-muted/60 border border-border focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full pl-8 pr-3 py-1.5 text-xs uppercase font-mono rounded-xl bg-muted/60 border border-border focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
-                  <Button type="submit" size="sm" variant="secondary" className="px-4 text-xs font-semibold">
+                  <Button type="submit" size="sm" variant="secondary" className="px-3 text-xs font-semibold h-8">
                     Apply
                   </Button>
                 </div>
-                {promoError && <p className="text-[11px] text-red-500 pl-1">{promoError}</p>}
-                <p className="text-[10px] text-muted-foreground pl-1">
-                  Tip: Use code <span className="font-bold underline cursor-pointer" onClick={() => setPromoInput("INDIA20")}>INDIA20</span> for 20% off
-                </p>
+                {promoError && <p className="text-[11px] text-destructive pl-1">{promoError}</p>}
               </form>
             ) : (
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
-                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
-                  <Tag className="h-4 w-4" />
-                  <span>Coupon {appliedPromo.code} applied (-{formatCurrency(discount)})</span>
+              <Alert variant="success" className="py-2 px-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Tag className="h-3.5 w-3.5" />
+                  <AlertDescription className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                    Coupon {appliedPromo.code} applied (-{formatCurrency(discount)})
+                  </AlertDescription>
                 </div>
                 <button
                   onClick={removePromoCode}
@@ -95,49 +108,48 @@ export function CartDrawer() {
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
-              </div>
+              </Alert>
             )}
 
-            {/* Price Calculations Breakdown (Rupees & GST) */}
-            <div className="space-y-2 text-xs pt-2">
+            {/* Pricing Breakdown: Compact & clear */}
+            <div className="space-y-1 text-xs pt-1">
               <div className="flex justify-between text-muted-foreground">
-                <span>Subtotal</span>
-                <span className="font-medium text-foreground">{formatCurrency(subtotal)}</span>
+                <span>Subtotal ({cartCount} items)</span>
+                <span className="font-medium text-foreground font-mono">{formatCurrency(subtotal)}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
                   <span>Coupon Discount</span>
-                  <span>-{formatCurrency(discount)}</span>
+                  <span className="font-mono">-{formatCurrency(discount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-muted-foreground">
                 <span>Delivery Charges</span>
-                <span>{shipping === 0 ? "FREE" : formatCurrency(shipping)}</span>
+                <span className="font-mono">{shipping === 0 ? "FREE" : formatCurrency(shipping)}</span>
               </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>Estimated GST (18%)</span>
-                <span>{formatCurrency(gst)}</span>
-              </div>
-              <div className="flex justify-between text-base font-bold text-foreground pt-2 border-t border-border">
-                <span>Total Amount</span>
-                <span>{formatCurrency(total)}</span>
+              <div className="flex justify-between text-base font-bold text-foreground pt-1.5 border-t border-border/80">
+                <div>
+                  <span>Total Amount</span>
+                  <span className="block text-[10px] text-muted-foreground font-normal">Incl. 18% GST ({formatCurrency(gst)})</span>
+                </div>
+                <span className="font-mono text-lg font-black">{formatCurrency(total)}</span>
               </div>
             </div>
 
             {/* Proceed to Checkout Button */}
             <Button
               onClick={handleProceedToCheckout}
-              className="w-full h-12 text-sm font-bold shadow-lg"
+              className="w-full h-11 sm:h-12 text-sm font-bold shadow-lg rounded-xl"
             >
               <span>Proceed to Checkout</span>
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
 
             {/* Clear Cart link */}
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-0.5">
               <button
                 onClick={clearCart}
-                className="text-[11px] text-muted-foreground hover:text-red-500 transition-colors flex items-center gap-1"
+                className="text-[11px] text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1"
               >
                 <Trash2 className="h-3 w-3" />
                 <span>Empty Cart</span>
@@ -147,28 +159,9 @@ export function CartDrawer() {
         ) : null
       }
     >
-      {/* Free Shipping Progress Meter */}
-      <div className="mb-4 p-3 rounded-xl bg-muted/40 border border-border/60">
-        <div className="flex justify-between text-xs font-medium mb-1.5">
-          <span className="flex items-center gap-1">
-            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-            <span>Free Delivery Target</span>
-          </span>
-          <span className="text-muted-foreground font-mono">
-            {freeShippingRemaining > 0 ? `${formatCurrency(freeShippingRemaining)} away` : "Unlocked"}
-          </span>
-        </div>
-        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all duration-500 rounded-full"
-            style={{ width: `${freeShippingProgress}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Cart Items List or Empty State */}
+      {/* Cart Items List: Clean spacious product cards */}
       {cart.length > 0 ? (
-        <div className="divide-y divide-border/60">
+        <div className="space-y-3">
           {cart.map((item) => (
             <CartItem key={item.cartItemId} item={item} />
           ))}

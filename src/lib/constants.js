@@ -1,9 +1,10 @@
 export const CATEGORIES = [
   { id: "all", label: "All Products", icon: "Sparkles" },
-  { id: "electronics", label: "Electronics & Audio", icon: "Headphones" },
-  { id: "footwear", label: "Footwear & Sneakers", icon: "Footprints" },
-  { id: "apparel", label: "Apparel & Essentials", icon: "Shirt" },
-  { id: "accessories", label: "Bags & Accessories", icon: "Watch" },
+  { id: "electronics", label: "Audio & Tech", icon: "Headphones" },
+  { id: "apparel", label: "Apparel", icon: "Shirt" },
+  { id: "footwear", label: "Footwear", icon: "Footprints" },
+  { id: "accessories", label: "Accessories", icon: "Watch" },
+  { id: "grooming", label: "Grooming & Fragrance", icon: "Sparkles" },
 ]
 
 export const SORT_OPTIONS = [

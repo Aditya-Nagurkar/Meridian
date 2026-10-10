@@ -15,6 +15,8 @@ import { useStore } from "../../context/StoreContext"
 import { Modal } from "../common/Modal"
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
+import { Card, CardContent } from "../ui/card"
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar"
 import { formatCurrency } from "../../lib/utils"
 
 export function AccountModal() {
@@ -22,7 +24,8 @@ export function AccountModal() {
 
   if (!user) return null
 
-  const userOrders = orders.filter((o) => o.userId === user.id || o.userId === "guest")
+  const safeOrders = Array.isArray(orders) ? orders : []
+  const userOrders = safeOrders.filter((o) => o?.userId === user.id || o?.userId === "guest")
 
   const handleSignOut = () => {
     logout()
@@ -33,23 +36,20 @@ export function AccountModal() {
     <Modal
       isOpen={isAccountOpen}
       onClose={() => setIsAccountOpen(false)}
+      title="Account Profile"
+      activeNavTab="account"
       maxWidth="max-w-lg"
       showCloseButton={true}
     >
-      <div className="space-y-5 max-h-[80vh] overflow-y-auto pr-1">
+      <div className="space-y-5">
         {/* Header / Profile Header */}
         <div className="flex items-start gap-3.5 pb-4 border-b border-border">
-          {user.avatar ? (
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl object-cover border-2 border-primary/30 flex-shrink-0 shadow-md"
-            />
-          ) : (
-            <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-primary/15 text-primary flex items-center justify-center font-bold text-xl flex-shrink-0 border border-primary/20">
+          <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-2 border-primary/30 flex-shrink-0 shadow-md">
+            {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
+            <AvatarFallback className="text-xl font-bold bg-primary/15 text-primary">
               {user.name.charAt(0).toUpperCase()}
-            </div>
-          )}
+            </AvatarFallback>
+          </Avatar>
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
