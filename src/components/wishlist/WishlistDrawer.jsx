@@ -34,7 +34,6 @@ export function WishlistDrawer() {
       onClose={() => setIsWishlistOpen(false)}
       title="Saved Wishlist"
       countBadge={`${wishlist.length} saved`}
-      subtitle="Items saved in your browser's LocalStorage"
       activeNavTab="wishlist"
       footer={
         wishlist.length > 0 ? (

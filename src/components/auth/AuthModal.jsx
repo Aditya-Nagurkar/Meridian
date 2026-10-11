@@ -143,7 +143,7 @@ export function AuthModal() {
             <div className="pt-3 border-t border-border/60">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium mb-2.5">
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
-                <span>Quick Demo Accounts (1-Click Test):</span>
+                <span>Demo Accounts:</span>
               </div>
 
               <div className="space-y-2">

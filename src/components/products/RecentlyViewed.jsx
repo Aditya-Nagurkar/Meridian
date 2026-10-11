@@ -20,7 +20,7 @@ export function RecentlyViewed() {
               Recently Viewed
             </h3>
             <p className="text-[11px] sm:text-xs text-muted-foreground">
-              Stored temporarily for this browsing session via SessionStorage
+              Products you explored recently
             </p>
           </div>
         </div>

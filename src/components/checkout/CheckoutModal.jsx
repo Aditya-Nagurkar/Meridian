@@ -212,12 +212,6 @@ export function CheckoutModal() {
             </div>
           </div>
 
-          {/* Storage & Invoice Note */}
-          <div className="text-[11px] text-muted-foreground bg-primary/5 p-3 rounded-xl border border-primary/10">
-            💾 <strong>Storage Integration:</strong> Your cart has been safely cleared from{" "}
-            <code>localStorage</code>, and this order receipt has been persisted to your local order history.
-          </div>
-
           <Button onClick={handleClose} className="w-full h-11 text-sm font-semibold shadow-md">
             <span>Continue Shopping</span>
             <ArrowRight className="h-4 w-4 ml-2" />

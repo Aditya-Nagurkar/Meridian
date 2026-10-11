@@ -105,15 +105,15 @@ function StoreContent() {
         <div ref={catalogRef} className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-14 sm:pb-16">
           <FilterBar totalResults={filteredProducts.length} />
 
-          {/* Dynamic Loading State from DummyJSON */}
+          {/* Dynamic Loading State */}
           {isLoadingProducts && products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <Spinner size="lg" className="text-primary mb-4" />
               <h3 className="text-base font-bold text-foreground font-['Space_Grotesk']">
-                Fetching Products from DummyJSON...
+                Loading Collection...
               </h3>
               <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                Loading authentic live catalog with real images, specs, and pricing.
+                Curating premium essentials for you.
               </p>
             </div>
           ) : productsError && products.length === 0 ? (
