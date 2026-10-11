@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { fetchProductsFromAPI } from "../services/productService"
-import mockUsers from "../data/users.json"
+import { fetchUsersFromAPI, loginWithAPI, registerWithAPI } from "../services/authService"
+import { fetchUserCartFromAPI, syncCartToAPI } from "../services/cartService"
 import {
   PROMO_CODES,
   FREE_SHIPPING_THRESHOLD,
@@ -161,6 +162,27 @@ export const useStore = create((set, get) => ({
   },
 
   // -------------------------------------------------------------
+  // LIVE USERS (Fetched from DummyJSON Users API)
+  // -------------------------------------------------------------
+  demoUsers: storageSafe.getSession("meridian_dummyjson_users_cache_v1", []),
+  isLoadingDemoUsers: false,
+
+  fetchDemoUsers: async () => {
+    if (get().demoUsers.length === 0) {
+      set({ isLoadingDemoUsers: true })
+    }
+    try {
+      const liveUsers = await fetchUsersFromAPI(6)
+      set({ demoUsers: liveUsers, isLoadingDemoUsers: false })
+      return liveUsers
+    } catch (err) {
+      console.warn("[useStore] Error loading demo users from DummyJSON:", err)
+      set({ isLoadingDemoUsers: false })
+      return get().demoUsers
+    }
+  },
+
+  // -------------------------------------------------------------
   // 1. LOCAL STORAGE PERSISTED (Dedicated independent keys)
   // -------------------------------------------------------------
   cart: storageSafe.getLocal("meridian_cart", []),
@@ -218,65 +240,67 @@ export const useStore = create((set, get) => ({
   // -------------------------------------------------------------
   // 6. AUTHENTICATION (Saved to localStorage: meridian_auth)
   // -------------------------------------------------------------
-  login: (email, password) => {
-    const trimmedEmail = email.trim().toLowerCase()
-    const found = mockUsers.find(
-      (u) => u.email.toLowerCase() === trimmedEmail && u.password === password
-    )
+  login: async (identifier, password) => {
+    try {
+      const res = await loginWithAPI(identifier, password)
+      if (res.success && res.user) {
+        storageSafe.setLocal("meridian_auth", res.user)
+        set({ user: res.user, isAuthOpen: false, isAccountOpen: true })
+        get().addToast(`Welcome back, ${res.user.name}!`, "success")
 
-    if (found) {
-      const { password: _, ...userProfile } = found
-      storageSafe.setLocal("meridian_auth", userProfile)
-      set({ user: userProfile, isAuthOpen: false, isAccountOpen: true })
-      get().addToast(`Welcome back, ${userProfile.name}!`, "success")
-      return { success: true, user: userProfile }
-    }
+        // Sync or import user cart from DummyJSON Carts API if local cart is empty
+        if (get().cart.length === 0 && res.user.id) {
+          try {
+            const remoteCart = await fetchUserCartFromAPI(res.user.id)
+            if (remoteCart && remoteCart.length > 0) {
+              const mapped = remoteCart.map((p) => ({
+                cartItemId: `${p.id}-default-default`,
+                productId: String(p.id),
+                quantity: p.quantity,
+                selectedColor: "Default Finish",
+                selectedSize: null,
+              }))
+              set({ cart: mapped })
+              storageSafe.setLocal("meridian_cart", mapped)
+              get().addToast(`Synced ${mapped.length} items from your account cart.`, "info")
+            }
+          } catch (e) {
+            console.warn("[useStore] Could not fetch remote cart:", e)
+          }
+        }
 
-    if (trimmedEmail && password.length >= 6) {
-      const newUser = {
-        id: `usr-${Date.now().toString(36)}`,
-        name: email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-        email: trimmedEmail,
-        role: "Member",
-        tier: "Meridian Classic",
-        phone: "+91 98000 00000",
-        memberSince: "Oct 2026",
-        rewardPoints: 100,
-        defaultAddress: null,
+        return { success: true, user: res.user }
       }
-      storageSafe.setLocal("meridian_auth", newUser)
-      set({ user: newUser, isAuthOpen: false, isAccountOpen: true })
-      get().addToast(`Welcome to Meridian, ${newUser.name}!`, "success")
-      return { success: true, user: newUser }
-    }
 
-    get().addToast("Invalid email or password (min 6 characters).", "error")
-    return { success: false, error: "Invalid credentials" }
+      get().addToast(res.error || "Invalid username or password.", "error")
+      return { success: false, error: res.error || "Invalid credentials" }
+    } catch (err) {
+      get().addToast("Authentication service unavailable.", "error")
+      return { success: false, error: err.message }
+    }
   },
 
-  register: (name, email, password, phone = "") => {
+  register: async (name, email, password, phone = "") => {
     const trimmedEmail = email.trim().toLowerCase()
     if (!name || !trimmedEmail || password.length < 6) {
       get().addToast("Please fill all fields (password min 6 chars).", "error")
       return { success: false, error: "Validation failed" }
     }
 
-    const newUser = {
-      id: `usr-${Date.now().toString(36)}`,
-      name,
-      email: trimmedEmail,
-      phone: phone || "+91 98000 00000",
-      role: "Member",
-      tier: "Meridian Classic",
-      memberSince: "Oct 2026",
-      rewardPoints: 200,
-      defaultAddress: null,
-    }
+    try {
+      const res = await registerWithAPI(name, trimmedEmail, password, phone)
+      if (res.success && res.user) {
+        storageSafe.setLocal("meridian_auth", res.user)
+        set({ user: res.user, isAuthOpen: false, isAccountOpen: true })
+        get().addToast(`Account created! Welcome, ${res.user.name}.`, "success")
+        return { success: true, user: res.user }
+      }
 
-    storageSafe.setLocal("meridian_auth", newUser)
-    set({ user: newUser, isAuthOpen: false, isAccountOpen: true })
-    get().addToast(`Account created! Welcome, ${name}.`, "success")
-    return { success: true, user: newUser }
+      get().addToast(res.error || "Registration failed.", "error")
+      return { success: false, error: res.error }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
   },
 
   logout: () => {

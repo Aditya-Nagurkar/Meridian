@@ -90,8 +90,11 @@ export function useStore() {
     quickViewProduct: store.quickViewProduct,
     setQuickViewProduct: store.setQuickViewProduct,
 
-    // Auth
+    // Auth & Users (Live DummyJSON)
     user: store.user,
+    demoUsers: store.demoUsers,
+    fetchDemoUsers: store.fetchDemoUsers,
+    isLoadingDemoUsers: store.isLoadingDemoUsers,
     login: store.login,
     register: store.register,
     logout: store.logout,

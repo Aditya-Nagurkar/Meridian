@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Lock, Mail, User, Phone, Sparkles, AlertCircle } from "lucide-react"
+import { Lock, Mail, User, Phone, Sparkles, AlertCircle, Loader2 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Modal } from "../common/Modal"
 import { Input } from "../ui/input"
@@ -9,11 +9,27 @@ import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar"
 import { Alert, AlertDescription } from "../ui/alert"
 import { Field, FieldLabel, FieldError } from "../ui/field"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs"
-import mockUsers from "../../data/users.json"
 
 export function AuthModal() {
-  const { isAuthOpen, setIsAuthOpen, setIsAccountOpen, user, login, register } = useStore()
+  const {
+    isAuthOpen,
+    setIsAuthOpen,
+    setIsAccountOpen,
+    user,
+    demoUsers,
+    fetchDemoUsers,
+    isLoadingDemoUsers,
+    login,
+    register,
+  } = useStore()
   const [activeTab, setActiveTab] = useState("signin")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (isAuthOpen) {
+      fetchDemoUsers()
+    }
+  }, [isAuthOpen, fetchDemoUsers])
 
   useEffect(() => {
     if (user && isAuthOpen) {
@@ -36,28 +52,36 @@ export function AuthModal() {
 
   if (user) return null
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault()
     setLoginError("")
-    const res = login(loginEmail, loginPassword)
-    if (!res.success) {
-      setLoginError(res.error || "Invalid credentials")
+    setIsSubmitting(true)
+    const res = await login(loginEmail, loginPassword)
+    setIsSubmitting(false)
+    if (!res?.success) {
+      setLoginError(res?.error || "Invalid username or password")
     }
   }
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault()
     setRegError("")
-    const res = register(regName, regEmail, regPassword, regPhone)
-    if (!res.success) {
-      setRegError(res.error || "Please complete all fields")
+    setIsSubmitting(true)
+    const res = await register(regName, regEmail, regPassword, regPhone)
+    setIsSubmitting(false)
+    if (!res?.success) {
+      setRegError(res?.error || "Please complete all fields")
     }
   }
 
-  const handleQuickDemoLogin = (demoUser) => {
-    setLoginEmail(demoUser.email)
-    setLoginPassword(demoUser.password)
-    login(demoUser.email, demoUser.password)
+  const handleQuickDemoLogin = async (demoUser) => {
+    const credUser = demoUser.username || demoUser.email
+    const credPass = demoUser.password || "emilyspass"
+    setLoginEmail(credUser)
+    setLoginPassword(credPass)
+    setIsSubmitting(true)
+    await login(credUser, credPass)
+    setIsSubmitting(false)
   }
 
   return (
@@ -93,13 +117,13 @@ export function AuthModal() {
           <TabsContent value="signin" className="space-y-4">
             <form onSubmit={handleLoginSubmit} className="space-y-3.5">
               <Field>
-                <FieldLabel htmlFor="login-email">Email Address</FieldLabel>
+                <FieldLabel htmlFor="login-email">Username or Email</FieldLabel>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="login-email"
-                    type="email"
-                    placeholder="aditya@meridian.in"
+                    type="text"
+                    placeholder="emilys"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     className="pl-9"
@@ -111,7 +135,7 @@ export function AuthModal() {
               <Field>
                 <div className="flex items-center justify-between">
                   <FieldLabel htmlFor="login-password">Password</FieldLabel>
-                  <span className="text-[11px] text-muted-foreground">Demo: password123</span>
+                  <span className="text-[11px] text-muted-foreground">Demo: emilyspass</span>
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -134,8 +158,15 @@ export function AuthModal() {
                 </Alert>
               )}
 
-              <Button type="submit" className="w-full font-bold shadow-md">
-                Sign In
+              <Button type="submit" className="w-full font-bold shadow-md" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <span>Signing In...</span>
+                  </>
+                ) : (
+                  <span>Sign In</span>
+                )}
               </Button>
             </form>
 
@@ -147,34 +178,42 @@ export function AuthModal() {
               </div>
 
               <div className="space-y-2">
-                {mockUsers.map((u) => (
-                  <button
-                    key={u.id}
-                    type="button"
-                    onClick={() => handleQuickDemoLogin(u)}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl border border-border/80 bg-muted/30 hover:bg-muted/70 transition-all text-left group"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Avatar className="h-7 w-7 border border-border">
-                        <AvatarImage src={u.avatar} alt={u.name} />
-                        <AvatarFallback className="text-[10px] font-bold">
-                          {u.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="truncate">
-                        <div className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {u.name}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground truncate">
-                          {u.email}
+                {isLoadingDemoUsers && (!demoUsers || demoUsers.length === 0) ? (
+                  <div className="py-4 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    <span>Loading accounts...</span>
+                  </div>
+                ) : (
+                  (demoUsers?.length > 0 ? demoUsers.slice(0, 4) : []).map((u) => (
+                    <button
+                      key={u.id}
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => handleQuickDemoLogin(u)}
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl border border-border/80 bg-muted/30 hover:bg-muted/70 transition-all text-left group disabled:opacity-50"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Avatar className="h-7 w-7 border border-border">
+                          <AvatarImage src={u.avatar} alt={u.name} />
+                          <AvatarFallback className="text-[10px] font-bold">
+                            {u.name?.charAt(0) || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="truncate">
+                          <div className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {u.name}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground truncate font-mono">
+                            @{u.username} • {u.email}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <Badge variant="accent" className="text-[10px] px-2 py-0.5">
-                      {u.tier}
-                    </Badge>
-                  </button>
-                ))}
+                      <Badge variant="accent" className="text-[10px] px-2 py-0.5">
+                        {u.tier}
+                      </Badge>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           </TabsContent>
@@ -252,8 +291,15 @@ export function AuthModal() {
                 </Alert>
               )}
 
-              <Button type="submit" className="w-full font-bold shadow-md mt-2">
-                Create Account
+              <Button type="submit" className="w-full font-bold shadow-md mt-2" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <span>Creating Account...</span>
+                  </>
+                ) : (
+                  <span>Create Account</span>
+                )}
               </Button>
             </form>
           </TabsContent>
