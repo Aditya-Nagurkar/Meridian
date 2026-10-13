@@ -15,6 +15,8 @@ export function AuthModal() {
     isAuthOpen,
     setIsAuthOpen,
     setIsAccountOpen,
+    setIsCheckoutOpen,
+    cart,
     user,
     demoUsers,
     fetchDemoUsers,
@@ -34,9 +36,13 @@ export function AuthModal() {
   useEffect(() => {
     if (user && isAuthOpen) {
       setIsAuthOpen(false)
-      setIsAccountOpen(true)
+      if (cart.length > 0) {
+        setIsCheckoutOpen(true)
+      } else {
+        setIsAccountOpen(true)
+      }
     }
-  }, [user, isAuthOpen, setIsAuthOpen, setIsAccountOpen])
+  }, [user, isAuthOpen, cart.length, setIsAuthOpen, setIsAccountOpen, setIsCheckoutOpen])
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("")

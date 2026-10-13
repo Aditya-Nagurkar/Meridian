@@ -3,13 +3,13 @@ import { cva } from "class-variance-authority"
 import { cn } from "../../lib/utils"
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-3 overflow-hidden rounded-2xl border p-3.5 pr-8 shadow-2xl transition-all",
+  "group pointer-events-auto relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-2xl border p-3 sm:p-3.5 shadow-2xl backdrop-blur-md transition-all",
   {
     variants: {
       variant: {
-        default: "border-border bg-card text-card-foreground",
-        destructive: "border-destructive/60 bg-destructive text-destructive-foreground",
-        success: "border-emerald-500/30 bg-emerald-950/90 text-emerald-100",
+        default: "border-border bg-card/95 text-card-foreground shadow-[0_10px_30px_rgba(0,0,0,0.2)]",
+        destructive: "border-destructive/60 bg-destructive/95 text-destructive-foreground shadow-[0_10px_30px_rgba(220,38,38,0.25)]",
+        success: "border-emerald-500/40 bg-[#132A1C]/95 text-emerald-100 shadow-[0_10px_30px_rgba(5,150,105,0.25)]",
       },
     },
     defaultVariants: {

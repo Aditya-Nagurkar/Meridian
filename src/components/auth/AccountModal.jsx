@@ -36,7 +36,13 @@ export function AccountModal() {
   if (!user) return null
 
   const safeOrders = Array.isArray(orders) ? orders : []
-  const userOrders = safeOrders.filter((o) => o?.userId === user.id || o?.userId === "guest")
+  const userOrders = safeOrders.filter((o) => {
+    if (!o) return false
+    if (user.id && String(o.userId) === String(user.id)) return true
+    if (user.email && o.userEmail && o.userEmail.toLowerCase() === user.email.toLowerCase()) return true
+    if (user.email && o.shippingAddress?.email && o.shippingAddress.email.toLowerCase() === user.email.toLowerCase()) return true
+    return false
+  })
 
   const handleSignOut = () => {
     logout()
@@ -157,7 +163,7 @@ export function AccountModal() {
         </div>
 
         {/* Saved Shipping Address */}
-        {user.defaultAddress && (
+        {user.defaultAddress?.street ? (
           <div className="p-3.5 rounded-xl border border-border bg-card">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
@@ -170,7 +176,7 @@ export function AccountModal() {
             </div>
             <div className="text-xs text-muted-foreground space-y-0.5 leading-relaxed">
               <p className="font-semibold text-foreground">
-                {user.defaultAddress.fullName}
+                {user.defaultAddress.fullName || user.name}
               </p>
               <p>{user.defaultAddress.street}</p>
               <p>
@@ -180,6 +186,14 @@ export function AccountModal() {
                 </span>
               </p>
             </div>
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-xl border border-dashed border-border/80 bg-muted/15 text-center">
+            <MapPin className="h-4 w-4 text-muted-foreground mx-auto mb-1 opacity-50" />
+            <p className="text-xs font-medium text-foreground">No Delivery Address Saved Yet</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              Your address will be automatically saved when you place your first order.
+            </p>
           </div>
         )}
 

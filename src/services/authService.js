@@ -32,7 +32,7 @@ export function normalizeDummyUser(u, token = null) {
     firstName,
     lastName,
     email: u.email,
-    phone: u.phone || "+91 98201 12345",
+    phone: u.phone || "",
     avatar: u.image || `https://dummyjson.com/icon/${u.username || "user"}/128`,
     gender: u.gender,
     role: u.role || "user",
@@ -40,14 +40,16 @@ export function normalizeDummyUser(u, token = null) {
     memberSince: "Jan 2025",
     rewardPoints: 1000 + ((u.id * 150) % 900),
     password: u.password || "password123", // Preserved for 1-click demo logins
-    defaultAddress: {
-      fullName,
-      phone: u.phone || "+91 98201 12345",
-      street: u.address?.address || "402, High Street Residences",
-      city: u.address?.city || "Mumbai",
-      state: u.address?.state || "Maharashtra",
-      pincode: u.address?.postalCode || "400018",
-    },
+    defaultAddress: u.address?.address
+      ? {
+          fullName,
+          phone: u.phone || "",
+          street: u.address.address,
+          city: u.address.city || "",
+          state: u.address.state || "",
+          pincode: u.address.postalCode || "",
+        }
+      : null,
     token: token || u.token || null,
   }
 }
@@ -180,7 +182,7 @@ export async function registerWithAPI(name, email, password, phone = "") {
         lastName,
         email,
         password,
-        phone: phone || "+91 98000 00000",
+        phone: phone || "",
         username,
       }),
     })
@@ -192,14 +194,19 @@ export async function registerWithAPI(name, email, password, phone = "") {
       firstName,
       lastName,
       email,
-      phone: phone || "+91 98000 00000",
+      phone: phone || "",
       username,
       password,
+      address: null, // New registered account starts with no address
     })
 
     return {
       success: true,
-      user: newUser,
+      user: {
+        ...newUser,
+        defaultAddress: null,
+        rewardPoints: 100, // 100 welcome bonus points
+      },
     }
   } catch (err) {
     // Fallback registration locally if offline
@@ -208,14 +215,19 @@ export async function registerWithAPI(name, email, password, phone = "") {
       firstName,
       lastName,
       email,
-      phone: phone || "+91 98000 00000",
+      phone: phone || "",
       username,
       password,
+      address: null,
     })
 
     return {
       success: true,
-      user: fallbackUser,
+      user: {
+        ...fallbackUser,
+        defaultAddress: null,
+        rewardPoints: 100,
+      },
     }
   }
 }

@@ -11,6 +11,8 @@ export function CheckoutModal() {
   const {
     isCheckoutOpen,
     setIsCheckoutOpen,
+    setIsAuthOpen,
+    addToast,
     cart,
     subtotal,
     discount,
@@ -24,19 +26,19 @@ export function CheckoutModal() {
 
   // Form Fields customized for Indian market
   const [formData, setFormData] = useState({
-    fullName: "Rohit Verma",
-    email: "rohit.verma@meridian.in",
-    phone: "9876543210",
-    flatHouse: "Flat 402, Signature Towers",
-    streetArea: "Indiranagar 100ft Road",
-    city: "Bengaluru",
-    state: "Karnataka",
-    pincode: "560038",
+    fullName: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone ? user.phone.replace("+91", "").trim() : "",
+    flatHouse: user?.defaultAddress?.street ? user.defaultAddress.street.split(",")[0] : "",
+    streetArea: user?.defaultAddress?.street ? user.defaultAddress.street.split(",").slice(1).join(",").trim() : "",
+    city: user?.defaultAddress?.city || "",
+    state: user?.defaultAddress?.state || "Maharashtra",
+    pincode: user?.defaultAddress?.pincode || "",
     paymentMethod: "upi", // upi | card | cod | netbanking
-    upiId: "rohit.verma@okhdfcbank",
-    cardNumber: "5241 •••• •••• 8892",
-    cardExp: "08/29",
-    cardCvc: "742",
+    upiId: user?.email ? `${user.email.split("@")[0]}@okhdfcbank` : "",
+    cardNumber: "",
+    cardExp: "",
+    cardCvc: "",
     bank: "HDFC Bank",
   })
 
@@ -44,24 +46,36 @@ export function CheckoutModal() {
   const [confirmedOrder, setConfirmedOrder] = useState(null)
   const [isCopied, setIsCopied] = useState(false)
 
-  // Auto-fill from authenticated user profile
+  // Guard: Users must sign in first before placing an order
+  useEffect(() => {
+    if (isCheckoutOpen && !user) {
+      setIsCheckoutOpen(false)
+      setIsAuthOpen(true)
+      addToast("Please sign in or create an account to place an order.", "info")
+    }
+  }, [isCheckoutOpen, user, setIsCheckoutOpen, setIsAuthOpen, addToast])
+
+  // Cleanly sync form data with authenticated user profile when modal opens or user changes
   useEffect(() => {
     if (user && isCheckoutOpen) {
-      setFormData((prev) => ({
-        ...prev,
-        fullName: user.name || prev.fullName,
-        email: user.email || prev.email,
-        phone: user.phone ? user.phone.replace("+91", "").trim() : prev.phone,
-        ...(user.defaultAddress
-          ? {
-              flatHouse: user.defaultAddress.street.split(",")[0] || prev.flatHouse,
-              streetArea: user.defaultAddress.street.split(",").slice(1).join(",").trim() || user.defaultAddress.street,
-              city: user.defaultAddress.city || prev.city,
-              state: user.defaultAddress.state || prev.state,
-              pincode: user.defaultAddress.pincode || prev.pincode,
-            }
-          : {}),
-      }))
+      setFormData({
+        fullName: user.name || "",
+        email: user.email || "",
+        phone: user.phone ? user.phone.replace("+91", "").trim() : "",
+        flatHouse: user.defaultAddress?.street ? user.defaultAddress.street.split(",")[0] : "",
+        streetArea: user.defaultAddress?.street
+          ? user.defaultAddress.street.split(",").slice(1).join(",").trim()
+          : "",
+        city: user.defaultAddress?.city || "",
+        state: user.defaultAddress?.state || "Maharashtra",
+        pincode: user.defaultAddress?.pincode || "",
+        paymentMethod: "upi",
+        upiId: user.email ? `${user.email.split("@")[0]}@okhdfcbank` : "",
+        cardNumber: "",
+        cardExp: "",
+        cardCvc: "",
+        bank: "HDFC Bank",
+      })
     }
   }, [user, isCheckoutOpen])
 
@@ -89,6 +103,12 @@ export function CheckoutModal() {
 
   const handleSubmitOrder = (e) => {
     e.preventDefault()
+    if (!user) {
+      setIsCheckoutOpen(false)
+      setIsAuthOpen(true)
+      addToast("Please sign in or create an account to place an order.", "error")
+      return
+    }
     setIsSubmitting(true)
 
     // Simulate realistic payment gateway processing delay (Razorpay / Cashfree style)
@@ -128,7 +148,7 @@ export function CheckoutModal() {
     }
   }
 
-  if (!isCheckoutOpen) return null
+  if (!isCheckoutOpen || (!user && !confirmedOrder)) return null
 
   return (
     <Modal
@@ -467,7 +487,7 @@ export function CheckoutModal() {
                   <span>{shipping === 0 ? "FREE" : formatCurrency(shipping)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Estimated GST (18%)</span>
+                  <span>Estimated GST (18% included)</span>
                   <span>{formatCurrency(gst)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border">

@@ -16,9 +16,25 @@ export const SORT_OPTIONS = [
 ]
 
 export const PROMO_CODES = {
-  INDIA20: { discountPercent: 20, description: "20% festive discount on all orders" },
-  FIRST10: { discountPercent: 10, description: "10% off on your first order" },
-  FESTIVE500: { discountAmount: 500, minSubtotal: 2999, description: "Flat ₹500 off on orders above ₹2,999" },
+  INDIA20: {
+    code: "INDIA20",
+    discount: 20,
+    discountPercent: 20,
+    description: "20% festive discount on all orders",
+  },
+  FIRST10: {
+    code: "FIRST10",
+    discount: 10,
+    discountPercent: 10,
+    description: "10% off on your first order",
+  },
+  FESTIVE500: {
+    code: "FESTIVE500",
+    discountAmount: 500,
+    minSubtotal: 2999,
+    minSpend: 2999,
+    description: "Flat ₹500 off on orders above ₹2,999",
+  },
 }
 
 export const FREE_SHIPPING_THRESHOLD = 1499

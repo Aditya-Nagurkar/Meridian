@@ -26,6 +26,9 @@ export function CartDrawer() {
     removePromoCode,
     clearCart,
     setIsCheckoutOpen,
+    user,
+    setIsAuthOpen,
+    addToast,
   } = useStore()
 
   const [promoInput, setPromoInput] = useState("")
@@ -35,14 +38,21 @@ export function CartDrawer() {
     e.preventDefault()
     setPromoError("")
     const res = applyPromoCode(promoInput)
-    if (res.success) {
+    if (res?.success || res === true) {
       setPromoInput("")
+      setPromoError("")
     } else {
-      setPromoError(res.message)
+      setPromoError(res?.message || "Invalid coupon code.")
     }
   }
 
   const handleProceedToCheckout = () => {
+    if (!user) {
+      setIsCartOpen(false)
+      setIsAuthOpen(true)
+      addToast("Please sign in or create an account to proceed to checkout.", "info")
+      return
+    }
     setIsCartOpen(false)
     setIsCheckoutOpen(true)
   }
@@ -141,7 +151,7 @@ export function CartDrawer() {
               onClick={handleProceedToCheckout}
               className="w-full h-11 sm:h-12 text-sm font-bold shadow-lg rounded-xl"
             >
-              <span>Proceed to Checkout</span>
+              <span>{user ? "Proceed to Checkout" : "Sign In to Checkout"}</span>
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
 
