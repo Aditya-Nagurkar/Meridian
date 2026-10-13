@@ -69,11 +69,11 @@ export function transformDummyProduct(p) {
   // Convert USD to INR (approx 1 USD = 85 INR)
   const inrPrice = Math.round((p.price || 10) * 85)
 
-  // Compute original price if discount exists
+  // Compute original price if discount exists (P_orig = P / (1 - discount / 100))
   const discountPercent = p.discountPercentage ? Math.round(p.discountPercentage) : null
   const originalInrPrice =
     discountPercent && discountPercent > 0
-      ? Math.round(inrPrice * (1 + discountPercent / 100))
+      ? Math.round(inrPrice / (1 - discountPercent / 100))
       : null
 
   // Map category to Meridian high-level categories
@@ -121,21 +121,15 @@ export function transformDummyProduct(p) {
         ]
       : ["Default Finish", "Midnight Black", "Pure Silver"]
 
-  // Determine badge
+  // Determine merchandising badge (avoid duplicating discount badges)
   let badge = null
   let badgeType = "default"
-  if (discountPercent && discountPercent >= 15) {
-    badge = `${discountPercent}% Off`
-    badgeType = "destructive"
-  } else if (p.rating >= 4.5) {
+  if (p.rating >= 4.6) {
     badge = "Top Rated"
     badgeType = "default"
   } else if (p.stock !== undefined && p.stock <= 5 && p.stock > 0) {
     badge = `Only ${p.stock} Left`
     badgeType = "accent"
-  } else if (p.brand) {
-    badge = p.brand
-    badgeType = "secondary"
   }
 
   // Collect images safely
@@ -177,7 +171,7 @@ export function transformDummyProduct(p) {
   }
 }
 
-const CACHE_KEY = "meridian_dummyjson_products_cache_v3"
+const CACHE_KEY = "meridian_dummyjson_products_cache_v4"
 
 /**
  * Fetches products from DummyJSON API, filters out off-brand items (Home & Living, groceries, etc.),

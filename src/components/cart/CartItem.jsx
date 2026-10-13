@@ -8,14 +8,14 @@ export function CartItem({ item }) {
   const { product, quantity, cartItemId, selectedColor, selectedSize } = item
 
   return (
-    <div className="p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card/90 text-card-foreground shadow-sm hover:border-primary/40 transition-all flex gap-3.5 items-start">
+    <div className="p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card text-card-foreground shadow-[0_2px_12px_rgba(90,70,40,0.04)] hover:border-amber-600/40 transition-all flex gap-3.5 items-start">
       {/* Thumbnail */}
-      <div className="relative h-20 w-20 sm:h-22 sm:w-22 rounded-xl overflow-hidden bg-muted/40 border border-border/80 flex-shrink-0">
+      <div className="relative h-20 w-20 sm:h-22 sm:w-22 rounded-xl overflow-hidden bg-[#F2EBE0] dark:bg-muted/40 border border-[#E8DEC9] dark:border-border/80 flex-shrink-0 p-1.5">
         <img
           src={product.images[0]}
           alt={product.name}
           onError={handleImageFallback}
-          className="h-full w-full object-cover object-center"
+          className="h-full w-full object-contain object-center"
         />
         {product.originalPrice && product.originalPrice > product.price && (
           <span className="absolute bottom-1 left-1 bg-destructive text-destructive-foreground text-[8px] font-bold px-1 py-0.5 rounded shadow-sm">
@@ -29,7 +29,7 @@ export function CartItem({ item }) {
         <div>
           {/* Category Tag & Delete Button */}
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground truncate font-medium">
+            <span className="text-[10px] uppercase font-mono tracking-wider text-[#956E2C] dark:text-muted-foreground truncate font-bold">
               {product.categoryLabel || product.category}
             </span>
             <button

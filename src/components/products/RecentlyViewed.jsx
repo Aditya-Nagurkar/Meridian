@@ -34,20 +34,20 @@ export function RecentlyViewed() {
               recordProductView(item)
               setQuickViewProduct(item)
             }}
-            className="group relative flex flex-col rounded-xl border border-border bg-card p-2 sm:p-2.5 transition-all duration-200 hover:border-primary/40 hover:shadow-md cursor-pointer"
+            className="group relative flex flex-col rounded-2xl border border-border/90 bg-card p-2 sm:p-2.5 transition-all duration-300 hover:border-amber-600/40 hover:shadow-[0_12px_30px_-8px_rgba(180,130,50,0.18)] cursor-pointer shadow-[0_2px_12px_rgba(90,70,40,0.04)]"
           >
-            <div className="aspect-square w-full rounded-lg overflow-hidden bg-muted/30 mb-1.5 sm:mb-2">
+            <div className="aspect-square w-full rounded-xl overflow-hidden bg-[#F2EBE0] dark:bg-muted/30 border border-[#E8DEC9] dark:border-border/60 mb-1.5 sm:mb-2 p-1.5">
               <img
                 src={item.images[0]}
                 alt={item.name}
                 loading="lazy"
                 decoding="async"
                 onError={handleImageFallback}
-                className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                className="h-full w-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
               />
             </div>
 
-            <span className="text-[9px] uppercase font-mono text-muted-foreground truncate">
+            <span className="text-[9px] uppercase font-mono text-[#956E2C] dark:text-muted-foreground font-bold truncate">
               {item.categoryLabel || item.category}
             </span>
             <h4 className="text-xs font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">

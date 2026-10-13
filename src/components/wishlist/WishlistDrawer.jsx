@@ -61,7 +61,7 @@ export function WishlistDrawer() {
           {wishlist.map((product) => (
             <div
               key={product.id}
-              className="p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card/90 text-card-foreground shadow-sm hover:border-primary/40 transition-all flex gap-3.5 items-start group"
+              className="p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card text-card-foreground shadow-[0_2px_12px_rgba(90,70,40,0.04)] hover:border-amber-600/40 transition-all flex gap-3.5 items-start group"
             >
               <div
                 onClick={() => {
@@ -69,18 +69,18 @@ export function WishlistDrawer() {
                   setQuickViewProduct(product)
                   setIsWishlistOpen(false)
                 }}
-                className="h-20 w-20 sm:h-22 sm:w-22 flex-shrink-0 rounded-xl overflow-hidden bg-muted/40 border border-border/80 cursor-pointer"
+                className="h-20 w-20 sm:h-22 sm:w-22 flex-shrink-0 rounded-xl overflow-hidden bg-[#F2EBE0] dark:bg-muted/40 border border-[#E8DEC9] dark:border-border/80 cursor-pointer p-1.5"
               >
                 <img
                   src={product.images[0]}
                   alt={product.name}
                   onError={handleImageFallback}
-                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
 
               <div className="flex-1 min-w-0">
-                <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground block font-medium">
+                <span className="text-[10px] uppercase font-mono tracking-wider text-[#956E2C] dark:text-muted-foreground block font-bold">
                   {product.categoryLabel || product.category}
                 </span>
                 <h4
@@ -107,7 +107,7 @@ export function WishlistDrawer() {
                 <div className="flex items-center gap-2 mt-2.5">
                   <button
                     onClick={() => handleMoveToCart(product)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-all active:scale-95 shadow-sm"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/95 border border-amber-500/25 transition-all active:scale-95 shadow-sm"
                   >
                     <ShoppingBag className="h-3 w-3" />
                     <span>Move to Cart</span>

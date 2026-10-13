@@ -10,6 +10,9 @@ import {
   Calendar,
   CheckCircle2,
   ExternalLink,
+  Eye,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
 import { Modal } from "../common/Modal"
@@ -17,10 +20,18 @@ import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import { Card, CardContent } from "../ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar"
-import { formatCurrency } from "../../lib/utils"
+import { formatCurrency, handleImageFallback } from "../../lib/utils"
 
 export function AccountModal() {
-  const { isAccountOpen, setIsAccountOpen, user, logout, orders } = useStore()
+  const {
+    isAccountOpen,
+    setIsAccountOpen,
+    user,
+    logout,
+    orders,
+    products,
+    setQuickViewProduct,
+  } = useStore()
 
   if (!user) return null
 
@@ -32,13 +43,53 @@ export function AccountModal() {
     setIsAccountOpen(false)
   }
 
+  const handleViewProduct = (item) => {
+    const liveMatch = (products || []).find(
+      (p) =>
+        String(p.id) === String(item.productId) ||
+        p.name.toLowerCase() === (item.name || "").toLowerCase()
+    )
+    if (liveMatch) {
+      setQuickViewProduct(liveMatch)
+      setIsAccountOpen(false)
+    }
+  }
+
+  const getOrderItems = (order) => {
+    if (Array.isArray(order.items) && order.items.length > 0) {
+      return order.items.map((item) => {
+        const liveMatch = (products || []).find((p) => String(p.id) === String(item.productId))
+        return {
+          ...item,
+          name: item.name || liveMatch?.name || "Curated Essential",
+          image: item.image || liveMatch?.images?.[0] || "/logo.png",
+          priceAtPurchase: item.priceAtPurchase || item.price || liveMatch?.price || order.total,
+          quantity: item.quantity || 1,
+        }
+      })
+    }
+    // Fallback for orders without an items array
+    const matched =
+      (products || []).find((p) => Math.abs(p.price - (order.total || 0)) < 400) ||
+      (products && products[0])
+    return [
+      {
+        name: matched ? matched.name : "Curated Lifestyle Essential",
+        image: matched ? matched.images[0] : "/logo.png",
+        priceAtPurchase: order.total || (matched ? matched.price : 1499),
+        quantity: 1,
+        productId: matched?.id,
+      },
+    ]
+  }
+
   return (
     <Modal
       isOpen={isAccountOpen}
       onClose={() => setIsAccountOpen(false)}
       title="Account Profile"
       activeNavTab="account"
-      maxWidth="max-w-lg"
+      maxWidth="max-w-xl"
       showCloseButton={true}
     >
       <div className="space-y-5">
@@ -150,41 +201,126 @@ export function AccountModal() {
               </p>
             </div>
           ) : (
-            <div className="space-y-2.5">
-              {userOrders.slice(0, 3).map((order) => (
-                <div
-                  key={order.orderId}
-                  className="p-3 rounded-xl border border-border bg-card hover:border-primary/30 transition-all space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-foreground">
-                        {order.orderId}
+            <div className="space-y-3">
+              {userOrders.slice(0, 5).map((order) => {
+                const orderItems = getOrderItems(order)
+                return (
+                  <div
+                    key={order.orderId}
+                    className="p-3.5 sm:p-4 rounded-2xl border border-border bg-card hover:border-[#C59B3C]/50 transition-all shadow-sm space-y-3"
+                  >
+                    {/* Order Top Bar: ID, Status, Total */}
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-foreground">
+                          {order.orderId}
+                        </span>
+                        <Badge
+                          variant="default"
+                          className="text-[9px] px-2 py-0.5 bg-emerald-600 text-white font-semibold"
+                        >
+                          {order.status || "Confirmed"}
+                        </Badge>
+                      </div>
+                      <span className="font-black text-sm text-foreground font-mono">
+                        {formatCurrency(order.total)}
                       </span>
-                      <Badge variant="default" className="text-[9px] px-1.5 py-0">
-                        {order.status || "Confirmed"}
-                      </Badge>
                     </div>
-                    <span className="font-black text-xs text-foreground font-mono">
-                      {formatCurrency(order.total)}
-                    </span>
-                  </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/50">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(order.date).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <span>
-                      {order.items?.length || 1} item{order.items?.length > 1 ? "s" : ""}
-                    </span>
+                    {/* Order Meta: Date & Payment Method */}
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5 text-primary" />
+                        {new Date(order.date).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                      {order.paymentMethod && (
+                        <span className="font-mono text-[10px] uppercase px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/60">
+                          {order.paymentMethod}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Ordered Items List */}
+                    <div className="pt-2 border-t border-border/60 space-y-2">
+                      <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground font-bold">
+                        Items Ordered ({orderItems.length})
+                      </div>
+
+                      <div className="space-y-2">
+                        {orderItems.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center gap-3 p-2 sm:p-2.5 rounded-xl bg-[#F7F2E8]/70 dark:bg-muted/40 border border-[#E8DEC9] dark:border-border/60 transition-colors"
+                          >
+                            {/* Product Thumbnail on Sandstone Pedestal */}
+                            <div className="h-12 w-12 sm:h-13 sm:w-13 rounded-lg overflow-hidden bg-[#F2EBE0] dark:bg-muted/60 border border-[#DDD1BD] dark:border-border/80 flex-shrink-0 p-1">
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                onError={handleImageFallback}
+                                className="h-full w-full object-contain object-center"
+                              />
+                            </div>
+
+                            {/* Product Title, Quantity & Price */}
+                            <div className="min-w-0 flex-1">
+                              <h4 className="text-xs sm:text-sm font-bold text-foreground truncate leading-snug">
+                                {item.name}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground font-mono">
+                                <span>Qty: {item.quantity}</span>
+                                <span>•</span>
+                                <span className="font-bold text-foreground font-mono">
+                                  {formatCurrency(item.priceAtPurchase)}
+                                </span>
+                              </div>
+                              {(item.selectedColor || item.selectedSize) && (
+                                <div className="flex items-center gap-1.5 mt-1 text-[10px] text-muted-foreground">
+                                  {item.selectedColor && (
+                                    <span className="px-1.5 py-0.5 rounded bg-card border border-border text-[9px] font-medium">
+                                      {item.selectedColor}
+                                    </span>
+                                  )}
+                                  {item.selectedSize && (
+                                    <span className="px-1.5 py-0.5 rounded bg-card border border-border text-[9px] font-medium font-mono">
+                                      Size {item.selectedSize}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* View Product Details Button */}
+                            <button
+                              onClick={() => handleViewProduct(item)}
+                              className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground flex items-center gap-1 flex-shrink-0 transition-colors shadow-sm"
+                              title="View product in store"
+                            >
+                              <Eye className="h-3 w-3 text-primary" />
+                              <span className="hidden sm:inline">View</span>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Delivery Address Destination Snippet */}
+                    {order.shippingAddress && (
+                      <div className="pt-2 border-t border-border/40 text-[11px] text-muted-foreground flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span className="truncate">
+                          Delivering to: {order.shippingAddress.name || order.shippingAddress.address},{" "}
+                          {order.shippingAddress.city || ""} ({order.shippingAddress.postalCode || ""})
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

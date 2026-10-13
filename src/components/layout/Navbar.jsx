@@ -33,7 +33,7 @@ export function Navbar({ onOpenFilterMobile }) {
   }, [])
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/80 glass-header transition-colors">
+    <header className="sticky top-0 z-40 w-full border-b border-[#E3D7C1] dark:border-border/80 glass-header transition-colors">
       {/* Top Primary Bar: Brand + Spacious Search Bar + Actions */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18 gap-3 sm:gap-6">
@@ -55,7 +55,7 @@ export function Navbar({ onOpenFilterMobile }) {
               <span className="text-lg sm:text-xl font-extrabold tracking-tight text-foreground font-['Space_Grotesk'] block leading-none">
                 MERIDIAN
               </span>
-              <span className="text-[9px] sm:text-[10px] tracking-widest text-muted-foreground uppercase font-mono block mt-0.5">
+              <span className="text-[9px] sm:text-[10px] tracking-widest text-[#956E2C] dark:text-muted-foreground uppercase font-mono block mt-0.5 font-bold">
                 Essentials
               </span>
             </div>
@@ -68,10 +68,10 @@ export function Navbar({ onOpenFilterMobile }) {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search products, earbuds, linen, sneakers, specs... (Press '/')"
+                placeholder="Search for products, categories, or brands... (Press '/')"
                 value={filters.searchQuery}
                 onChange={(e) => updateFilter("searchQuery", e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm bg-muted/60 border border-border/80 text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all shadow-inner"
+                className="w-full pl-10 pr-10 py-2.5 rounded-full text-sm bg-[#F0E8DC]/70 dark:bg-muted/60 border border-[#DDD1BD] dark:border-border/80 text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-[#C59B3C] transition-all shadow-inner"
               />
               {filters.searchQuery ? (
                 <button
@@ -82,7 +82,7 @@ export function Navbar({ onOpenFilterMobile }) {
                   <X className="h-4 w-4" />
                 </button>
               ) : (
-                <kbd className="absolute right-3 hidden lg:inline-flex items-center rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground font-semibold">
+                <kbd className="absolute right-3 hidden lg:inline-flex items-center rounded-full border border-[#DDD1BD] dark:border-border bg-card px-2 py-0.5 font-mono text-[10px] text-muted-foreground font-semibold">
                   /
                 </kbd>
               )}
@@ -97,7 +97,7 @@ export function Navbar({ onOpenFilterMobile }) {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 sm:p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
+              className="p-2 sm:p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-[#EFE8DC]/80 dark:hover:bg-secondary/80 transition-colors"
               aria-label="Toggle dark/light theme"
               title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
@@ -107,7 +107,7 @@ export function Navbar({ onOpenFilterMobile }) {
             {/* Wishlist Trigger */}
             <button
               onClick={() => setIsWishlistOpen(true)}
-              className="relative p-2 sm:p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
+              className="relative p-2 sm:p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-[#EFE8DC]/80 dark:hover:bg-secondary/80 transition-colors"
               aria-label="Open wishlist"
               title="Saved Wishlist"
             >
@@ -122,7 +122,7 @@ export function Navbar({ onOpenFilterMobile }) {
             {/* Cart Drawer Trigger */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-2 pl-2.5 pr-3 py-2 sm:py-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all active:scale-95 shadow-md group"
+              className="relative flex items-center gap-2 pl-2.5 pr-3.5 py-2 sm:py-2.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/95 border border-amber-500/25 transition-all active:scale-95 shadow-[0_4px_14px_rgba(30,22,16,0.18)] hover:shadow-[0_6px_18px_rgba(200,140,50,0.25)] group"
               aria-label="Open shopping cart"
             >
               <div className="relative">
@@ -164,21 +164,24 @@ export function Navbar({ onOpenFilterMobile }) {
         </div>
       </div>
 
-      {/* Desktop Category Sub-Nav Bar (Clean & Dedicated) */}
-      <div className="hidden sm:block border-t border-border/50 bg-card/60 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Category Sub-Nav Bar (Clean & Dedicated across desktop and mobile) */}
+      <div className="border-t border-[#E3D7C1]/70 dark:border-border/50 bg-card/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-1.5 py-2 overflow-x-auto scrollbar-none">
             {CATEGORIES.map((cat) => {
               const isActive = filters.category === cat.id
               return (
                 <button
                   key={cat.id}
-                  onClick={() => updateFilter("category", cat.id)}
+                  onClick={() => {
+                    updateFilter("category", cat.id)
+                    onOpenFilterMobile?.()
+                  }}
                   className={cn(
-                    "px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150",
+                    "px-3.5 py-1.5 sm:px-4 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 flex-shrink-0",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                      ? "bg-primary text-primary-foreground border border-amber-500/25 shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-[#EFE8DC]/80 dark:hover:bg-muted/60"
                   )}
                 >
                   {cat.label}

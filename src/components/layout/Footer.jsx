@@ -17,12 +17,12 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-border bg-card/60 mt-20 pt-16 pb-24 sm:pb-16 text-card-foreground">
+    <footer className="border-t border-[#E3D7C1] dark:border-border bg-card/80 mt-20 pt-16 pb-24 sm:pb-16 text-card-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Value Proposition Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pb-12 border-b border-border">
           <div className="flex items-start gap-4">
-            <div className="h-11 w-11 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+            <div className="h-11 w-11 rounded-2xl bg-[#F8EED9] dark:bg-amber-400/10 text-[#8C6018] dark:text-amber-300 border border-[#ECD7B2] dark:border-amber-400/20 flex items-center justify-center flex-shrink-0">
               <Truck className="h-5 w-5" />
             </div>
             <div>
@@ -34,7 +34,7 @@ export function Footer() {
           </div>
 
           <div className="flex items-start gap-4">
-            <div className="h-11 w-11 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+            <div className="h-11 w-11 rounded-2xl bg-[#F8EED9] dark:bg-amber-400/10 text-[#8C6018] dark:text-amber-300 border border-[#ECD7B2] dark:border-amber-400/20 flex items-center justify-center flex-shrink-0">
               <RefreshCw className="h-5 w-5" />
             </div>
             <div>
@@ -46,7 +46,7 @@ export function Footer() {
           </div>
 
           <div className="flex items-start gap-4">
-            <div className="h-11 w-11 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+            <div className="h-11 w-11 rounded-2xl bg-[#F8EED9] dark:bg-amber-400/10 text-[#8C6018] dark:text-amber-300 border border-[#ECD7B2] dark:border-amber-400/20 flex items-center justify-center flex-shrink-0">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>

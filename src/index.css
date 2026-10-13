@@ -4,59 +4,77 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    /* Bespoke Venetian Travertine, Warm Ivory Porcelain & Gilded Champagne */
+    --background: 38 32% 96.2%;
+    --foreground: 25 32% 12%;
+    --card: 38 35% 98.8%;
+    --card-foreground: 25 32% 12%;
+    --popover: 38 35% 98.8%;
+    --popover-foreground: 25 32% 12%;
+    --primary: 26 36% 13%;
+    --primary-foreground: 40 45% 97%;
+    --secondary: 38 24% 92%;
+    --secondary-foreground: 25 30% 15%;
+    --muted: 38 22% 93%;
+    --muted-foreground: 28 16% 44%;
+    --accent: 40 55% 92%;
+    --accent-foreground: 36 85% 24%;
+    --destructive: 8 75% 52%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 36 26% 86.5%;
+    --input: 36 26% 86.5%;
+    --ring: 40 75% 48%;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    /* Midnight Obsidian Noir & Radiant 24K Champagne Gold */
+    --background: 240 6% 5%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 6%;
+    --card: 240 6% 8%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 6.5%;
+    --popover: 240 6% 7%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --primary: 42 72% 54%;
+    --primary-foreground: 240 10% 4%;
+    --secondary: 240 5% 12%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --muted: 240 5% 11%;
+    --muted-foreground: 240 4% 65%;
+    --accent: 42 45% 14%;
+    --accent-foreground: 42 85% 68%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 18%;
-    --input: 240 3.7% 18%;
-    --ring: 240 4.9% 83.9%;
+    --border: 240 5% 15%;
+    --input: 240 5% 15%;
+    --ring: 42 75% 55%;
   }
 
   * {
     @apply border-border;
   }
 
+  ::selection {
+    background-color: hsl(42 85% 55% / 0.3);
+    color: inherit;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: hsl(var(--foreground));
     background-color: hsl(var(--background));
+    background-image: 
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(212, 175, 55, 0.08), transparent 70%),
+      radial-gradient(ellipse 70% 50% at 100% 50%, rgba(197, 160, 89, 0.04), transparent 60%);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body {
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 175, 55, 0.06), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 100% 60%, rgba(255, 215, 0, 0.02), transparent 60%);
   }
 }
 
@@ -71,12 +89,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
+  background: hsl(var(--muted-foreground) / 0.25);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
+  background: hsl(var(--primary) / 0.45);
 }
 
 /* Glassmorphism helpers */
@@ -87,16 +105,30 @@
 }
 
 .glass-card {
-  background-color: hsla(var(--card) / 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid hsla(var(--border) / 0.6);
+  background-color: hsla(var(--card) / 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid hsla(var(--border) / 0.7);
 }
 
 /* Subtle dot background grid */
 .bg-grid-pattern {
-  background-size: 24px 24px;
+  background-size: 26px 26px;
   background-image: radial-gradient(circle, hsl(var(--muted-foreground) / 0.12) 1px, transparent 1px);
+}
+
+/* Luxury accent glow and elevation */
+.luxury-gold-glow {
+  box-shadow: 0 0 25px -4px hsl(38 80% 55% / 0.22);
+}
+
+.luxury-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card-hover:hover {
+  border-color: hsla(var(--primary) / 0.35);
+  box-shadow: 0 10px 30px -10px hsla(var(--primary) / 0.12);
 }
 
 /* ============================================================= */
@@ -278,3 +310,165 @@
     }
   }
 }
+
+/* Golden Text Shimmer Animation (Right to Left) */
+@keyframes shimmerGoldRTL {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.shimmer-gold-text {
+  background: linear-gradient(
+    115deg,
+    #d97706 0%,
+    #b45309 18%,
+    #f59e0b 35%,
+    #fef08a 47%,
+    #ffffff 50%,
+    #fde047 53%,
+    #f59e0b 68%,
+    #b45309 85%,
+    #d97706 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shimmerGoldRTL 3.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+.dark .shimmer-gold-text {
+  background: linear-gradient(
+    115deg,
+    #f59e0b 0%,
+    #d97706 20%,
+    #fbbf24 38%,
+    #ffffff 50%,
+    #fde047 54%,
+    #fbbf24 68%,
+    #d97706 82%,
+    #f59e0b 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shimmerGoldRTL 3.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* ============================================================= */
+/* OPTIMIZED LUXURY BACKGROUND ANIMATIONS (120FPS GPU COMPOSITED) */
+/* ============================================================= */
+
+@keyframes orbFloat1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate3d(50px, -25px, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes orbFloat2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(-40px, 30px, 0);
+    opacity: 0.95;
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes spinReverseSlow {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes stardustFloat {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(var(--tx, 10px), -100px, 0);
+    opacity: 0;
+  }
+}
+
+.animate-orb-1 {
+  animation: orbFloat1 20s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.animate-orb-2 {
+  animation: orbFloat2 26s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.animate-spin-orbital {
+  animation: spinSlow 90s linear infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.animate-spin-orbital-reverse {
+  animation: spinReverseSlow 70s linear infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.animate-stardust {
+  animation: stardustFloat var(--duration, 7s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-orb-1,
+  .animate-orb-2,
+  .animate-spin-orbital,
+  .animate-spin-orbital-reverse,
+  .animate-stardust {
+    animation: none !important;
+  }
+}
+
+

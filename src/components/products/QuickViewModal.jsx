@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import {
   Heart,
@@ -55,6 +55,7 @@ export function QuickViewModal() {
   const [selectedSize, setSelectedSize] = useState("")
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
+  const detailsScrollRef = useRef(null)
 
   // Listen to carousel slide changes
   useEffect(() => {
@@ -71,6 +72,9 @@ export function QuickViewModal() {
     if (quickViewProduct) {
       setSelectedImageIndex(0)
       if (api) api.scrollTo(0)
+      if (detailsScrollRef.current) {
+        detailsScrollRef.current.scrollTop = 0
+      }
       setSelectedColor(quickViewProduct.colors ? quickViewProduct.colors[0] : "")
       setSelectedSize(quickViewProduct.sizes ? quickViewProduct.sizes[0] : "")
       setQuantity(1)
@@ -83,9 +87,10 @@ export function QuickViewModal() {
 
   const isWishlisted = isInWishlist(product.id)
   const discountPercent =
-    product.originalPrice && product.originalPrice > product.price
+    product.discountPercent ||
+    (product.originalPrice && product.originalPrice > product.price
       ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-      : null
+      : null)
 
   const handleAddToCart = () => {
     addToCart(product, quantity, {
@@ -127,7 +132,7 @@ export function QuickViewModal() {
           */}
           <DialogPrimitive.Content
             className={cn(
-              "pointer-events-auto relative z-10 w-full h-[100dvh] sm:h-auto sm:max-h-[88vh] sm:max-w-4xl",
+              "pointer-events-auto relative z-10 w-full h-[100dvh] sm:h-[84vh] sm:max-h-[88vh] sm:max-w-4xl",
               "rounded-none sm:rounded-2xl border-0 sm:border border-border",
               "bg-background sm:bg-card text-card-foreground shadow-2xl",
               "flex flex-col overflow-hidden my-auto dialog-content focus:outline-none"
@@ -206,23 +211,37 @@ export function QuickViewModal() {
           </button>
         </div>
 
-        {/* Scrollable Main Content Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 sm:px-6 sm:py-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 items-start">
-            {/* Column 1: Image Gallery */}
-            <div className="space-y-2.5 sm:space-y-4">
-              <Carousel setApi={setApi} className="w-full relative">
+        {/* Main Content Body */}
+        <div className="flex-1 min-h-0 overflow-y-auto sm:overflow-hidden px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 items-start sm:h-full">
+            {/* Column 1: Image Gallery (Fixed on desktop, never scrolls with details) */}
+            <div
+              className="w-full sm:w-[46%] lg:w-[48%] flex-shrink-0 sm:h-full sm:flex sm:flex-col sm:justify-center gap-2 sm:gap-3"
+              onWheel={(e) => {
+                if (detailsScrollRef.current) {
+                  detailsScrollRef.current.scrollBy({ top: e.deltaY, behavior: "auto" })
+                }
+              }}
+            >
+              <Carousel setApi={setApi} className="w-full relative flex-shrink-0">
                 <CarouselContent>
                   {product.images.map((img, idx) => (
                     <CarouselItem key={idx}>
-                      <div className="relative aspect-[4/3] sm:aspect-square rounded-2xl overflow-hidden bg-muted/30 border border-border/80">
+                      <div
+                        className={cn(
+                          "relative w-full aspect-[4/3] sm:aspect-square mx-auto rounded-2xl overflow-hidden bg-[#F2EBE0] dark:bg-[#18181C] border border-[#E5DAC6] dark:border-border/80 shadow-[0_4px_20px_rgba(90,70,40,0.06)]",
+                          product.images.length > 1
+                            ? "max-h-[260px] sm:max-h-[min(270px,38vh)] lg:max-h-[min(300px,42vh)]"
+                            : "max-h-[300px] sm:max-h-[min(320px,45vh)] lg:max-h-[min(350px,48vh)]"
+                        )}
+                      >
                         <img
                           src={img}
                           alt={`${product.name} preview ${idx + 1}`}
                           loading="lazy"
                           decoding="async"
                           onError={handleImageFallback}
-                          className="w-full h-full object-cover object-center"
+                          className="w-full h-full object-contain object-center p-3 sm:p-4"
                         />
                         {/* Mobile Badge Overlay */}
                         {product.badge && idx === 0 && (
@@ -273,13 +292,13 @@ export function QuickViewModal() {
 
               {/* Thumbnails Row */}
               {product.images.length > 1 && (
-                <div className="hidden sm:flex items-center gap-2.5 overflow-x-auto pb-1">
+                <div className="hidden sm:flex items-center justify-center gap-2 overflow-x-auto pb-1 flex-shrink-0">
                   {product.images.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleThumbnailClick(idx)}
                       className={cn(
-                        "relative h-14 w-14 sm:h-16 sm:w-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0",
+                        "relative h-12 w-12 sm:h-13 sm:w-13 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0",
                         selectedImageIndex === idx
                           ? "border-primary ring-2 ring-primary/20 scale-102"
                           : "border-border/60 opacity-70 hover:opacity-100"
@@ -289,7 +308,7 @@ export function QuickViewModal() {
                         src={img}
                         alt=""
                         onError={handleImageFallback}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain p-1"
                       />
                     </button>
                   ))}
@@ -297,8 +316,11 @@ export function QuickViewModal() {
               )}
             </div>
 
-            {/* Column 2: Product Information, Selectors & Details */}
-            <div className="flex flex-col space-y-3.5 sm:space-y-4">
+            {/* Column 2: Product Information, Selectors & Details (Scrollable on desktop) */}
+            <div
+              ref={detailsScrollRef}
+              className="w-full sm:flex-1 min-h-0 sm:h-full sm:overflow-y-auto sm:pr-2.5 flex flex-col space-y-3.5 sm:space-y-4"
+            >
               <div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                   <StarRating rating={product.rating} reviewsCount={product.reviewsCount} size="sm" />
@@ -308,30 +330,30 @@ export function QuickViewModal() {
                 </div>
 
                 <DialogPrimitive.Title asChild>
-                  <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground font-['Space_Grotesk'] leading-snug">
+                  <h1 className="text-xl sm:text-3.5xl font-bold tracking-tight text-foreground font-serif leading-tight">
                     {product.name}
                   </h1>
                 </DialogPrimitive.Title>
 
-                {/* Inline Price Highlight */}
-                <div className="flex items-baseline gap-2.5 mt-2 p-2.5 rounded-xl bg-muted/40 border border-border/60">
-                  <span className="text-xl sm:text-2xl font-black text-foreground font-mono">
+                {/* Inline Price Highlight (matching Image 3) */}
+                <div className="flex items-center gap-3 mt-2.5">
+                  <span className="text-2xl sm:text-3xl font-black text-foreground font-mono">
                     {formatCurrency(product.price)}
                   </span>
                   {product.originalPrice && (
-                    <span className="text-xs sm:text-sm text-muted-foreground line-through font-mono">
+                    <span className="text-sm sm:text-base text-muted-foreground line-through font-mono">
                       {formatCurrency(product.originalPrice)}
                     </span>
                   )}
                   {discountPercent && (
-                    <Badge variant="accent" className="text-[10px] ml-auto">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-[#F7EEDF] text-[#8C6D37] dark:bg-amber-500/15 dark:text-amber-300">
                       Save {discountPercent}%
-                    </Badge>
+                    </span>
                   )}
                 </div>
 
                 <DialogPrimitive.Description asChild>
-                  <p className="text-xs sm:text-sm text-muted-foreground mt-2.5 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-3 leading-relaxed">
                     {product.description}
                   </p>
                 </DialogPrimitive.Description>
@@ -403,9 +425,9 @@ export function QuickViewModal() {
                     {product.specs.map((spec, i) => (
                       <div
                         key={i}
-                        className="p-1.5 sm:p-2 rounded-lg bg-muted/30 border border-border/50"
+                        className="p-1.5 sm:p-2 rounded-lg bg-[#F5EFE4]/80 dark:bg-muted/30 border border-[#E6DAC4] dark:border-border/50"
                       >
-                        <span className="text-muted-foreground block text-[10px]">
+                        <span className="text-[#8C7A6D] dark:text-muted-foreground block text-[10px]">
                           {spec.label}
                         </span>
                         <span className="font-semibold text-foreground truncate block">
@@ -419,17 +441,17 @@ export function QuickViewModal() {
 
               {/* Guarantees & Trust Highlights */}
               <div className="grid grid-cols-3 gap-1.5 text-[10px] text-muted-foreground pt-2 border-t border-border/70 text-center">
-                <div className="p-1.5 rounded-lg bg-muted/20 flex flex-col items-center gap-0.5">
-                  <Truck className="h-3.5 w-3.5 text-primary" />
-                  <span>Pan-India</span>
+                <div className="p-1.5 rounded-lg bg-[#F5EFE4]/80 dark:bg-muted/20 border border-[#E6DAC4]/60 dark:border-transparent flex flex-col items-center gap-0.5">
+                  <Truck className="h-3.5 w-3.5 text-[#A07028] dark:text-primary" />
+                  <span className="text-[#6D5A4C] dark:text-muted-foreground font-medium">Pan-India</span>
                 </div>
-                <div className="p-1.5 rounded-lg bg-muted/20 flex flex-col items-center gap-0.5">
-                  <RotateCcw className="h-3.5 w-3.5 text-primary" />
-                  <span>7-Day Return</span>
+                <div className="p-1.5 rounded-lg bg-[#F5EFE4]/80 dark:bg-muted/20 border border-[#E6DAC4]/60 dark:border-transparent flex flex-col items-center gap-0.5">
+                  <RotateCcw className="h-3.5 w-3.5 text-[#A07028] dark:text-primary" />
+                  <span className="text-[#6D5A4C] dark:text-muted-foreground font-medium">7-Day Return</span>
                 </div>
-                <div className="p-1.5 rounded-lg bg-muted/20 flex flex-col items-center gap-0.5">
-                  <Shield className="h-3.5 w-3.5 text-primary" />
-                  <span>1-Yr Warranty</span>
+                <div className="p-1.5 rounded-lg bg-[#F5EFE4]/80 dark:bg-muted/20 border border-[#E6DAC4]/60 dark:border-transparent flex flex-col items-center gap-0.5">
+                  <Shield className="h-3.5 w-3.5 text-[#A07028] dark:text-primary" />
+                  <span className="text-[#6D5A4C] dark:text-muted-foreground font-medium">1-Yr Warranty</span>
                 </div>
               </div>
             </div>
@@ -460,11 +482,11 @@ export function QuickViewModal() {
             {/* Stepper & Add to Cart Action Group */}
             <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-end max-w-sm">
               {/* Stepper */}
-              <div className="flex items-center border border-border rounded-xl overflow-hidden bg-muted/50 h-10 sm:h-11">
+              <div className="flex items-center border border-[#D5C7B0] dark:border-border rounded-full overflow-hidden bg-[#F2EBE0] dark:bg-muted/50 h-10 sm:h-11">
                 <button
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1}
-                  className="px-2.5 h-full hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
+                  className="px-2.5 sm:px-3 h-full hover:bg-[#EAE0CF] dark:hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="h-3.5 w-3.5" />
@@ -475,7 +497,7 @@ export function QuickViewModal() {
                 <button
                   onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
                   disabled={quantity >= product.stock}
-                  className="px-2.5 h-full hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
+                  className="px-2.5 sm:px-3 h-full hover:bg-[#EAE0CF] dark:hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
                   aria-label="Increase quantity"
                 >
                   <Plus className="h-3.5 w-3.5" />
@@ -487,8 +509,8 @@ export function QuickViewModal() {
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
                 className={cn(
-                  "flex-1 h-10 sm:h-11 text-xs sm:text-sm font-bold shadow-lg rounded-xl transition-all",
-                  isAdded && "bg-emerald-600 hover:bg-emerald-600 text-white"
+                  "flex-1 h-10 sm:h-11 text-xs sm:text-sm font-bold shadow-lg rounded-full transition-all border border-amber-500/25",
+                  isAdded && "bg-emerald-600 hover:bg-emerald-600 text-white border-transparent"
                 )}
               >
                 {isAdded ? (
@@ -508,7 +530,7 @@ export function QuickViewModal() {
               <button
                 onClick={() => toggleWishlist(product)}
                 className={cn(
-                  "hidden sm:flex p-2.5 rounded-xl border border-border transition-colors flex-shrink-0 items-center justify-center h-11 w-11",
+                  "hidden sm:flex p-2.5 rounded-full border border-border transition-colors flex-shrink-0 items-center justify-center h-11 w-11",
                   isWishlisted
                     ? "bg-red-500 text-white border-red-500 shadow-sm"
                     : "bg-secondary text-foreground hover:bg-muted"

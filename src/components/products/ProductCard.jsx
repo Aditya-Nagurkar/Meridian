@@ -65,97 +65,76 @@ function ProductCardComponent({ product }) {
   return (
     <Card
       onClick={handleOpenQuickView}
-      className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-primary/40 cursor-pointer p-0"
+      className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-[0_20px_45px_-12px_rgba(180,130,50,0.2)] hover:border-amber-600/50 dark:hover:border-primary/50 cursor-pointer p-0 bg-card text-card-foreground border border-border/90 rounded-2xl shadow-[0_4px_20px_-4px_rgba(90,70,40,0.05)]"
     >
-      {/* Product Image Frame */}
-      <div className="relative aspect-square w-full overflow-hidden bg-muted/40">
+      {/* Product Image Frame on Warm Sculptural Pedestal */}
+      <div className="relative aspect-square w-full overflow-hidden bg-[#F2EBE0] dark:bg-[#18181C] border-b border-[#E8DEC9] dark:border-border/60 p-3 sm:p-4">
         <img
           src={product.images[0]}
           alt={product.name}
           loading="lazy"
           decoding="async"
           onError={handleImageFallback}
-          className="h-full w-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+          className="h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-105"
         />
 
         {/* Top Badges */}
-        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1 z-10 pointer-events-none">
+        <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex flex-col gap-1 z-10 pointer-events-none">
           {quantityInCart > 0 && (
-            <Badge
-              variant="default"
-              className="text-[9px] sm:text-xs px-1.5 py-0.5 sm:px-2 bg-emerald-600 text-white border-0 shadow-sm font-mono font-bold animate-scale-in"
-            >
+            <span className="text-[9px] sm:text-[10px] px-2 py-0.5 bg-emerald-600 text-white rounded-lg shadow-sm font-mono font-bold animate-scale-in">
               {quantityInCart} in Cart
-            </Badge>
+            </span>
           )}
-          {product.badge && (
-            <Badge
-              variant={product.badgeType || "default"}
-              className="text-[9px] sm:text-xs px-1.5 py-0.5 sm:px-2.5 shadow-sm backdrop-blur-md"
-            >
+          {/* Status or Discount Badge */}
+          {(product.discountPercent && product.discountPercent > 0) ||
+          (product.originalPrice && product.originalPrice > product.price) ? (
+            <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-lg font-bold bg-[#FDF1EB] text-[#C2522C] border border-[#F7D4C6] shadow-sm">
+              {product.discountPercent ||
+                Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+            </span>
+          ) : product.badge ? (
+            <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg font-bold bg-[#241A14] text-[#FAF5ED] border border-amber-500/25 shadow-sm">
               {product.badge}
-            </Badge>
-          )}
-          {product.originalPrice && product.originalPrice > product.price && (
-            <Badge
-              variant="destructive"
-              className="text-[9px] sm:text-xs px-1.5 py-0.5 sm:px-2 shadow-sm"
-            >
-              {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% off
-            </Badge>
-          )}
+            </span>
+          ) : null}
         </div>
 
-        {/* Wishlist Button (Top Right) */}
+        {/* Wishlist Button (Circular Floating Button matching Image 2) */}
         <button
           onClick={handleToggleWishlist}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           className={cn(
-            "absolute top-2 right-2 sm:top-3 sm:right-3 z-10 p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all duration-200 active:scale-90 shadow-sm",
+            "absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10 h-7 w-7 sm:h-8 sm:w-8 rounded-full transition-all duration-200 active:scale-90 shadow-sm border flex items-center justify-center",
             isWishlisted
-              ? "bg-red-500 text-white hover:bg-red-600"
-              : "bg-white/80 dark:bg-black/60 text-muted-foreground hover:text-red-500 hover:bg-white dark:hover:bg-black/90"
+              ? "bg-red-500 text-white border-red-500 shadow-md"
+              : "bg-[#FDFBF7]/95 dark:bg-card/90 text-[#7A695C] dark:text-neutral-300 border-[#E2D6C0] dark:border-border hover:text-red-500 hover:border-red-300"
           )}
         >
-          <Heart className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", isWishlisted && "fill-current")} />
+          <Heart className={cn("h-3.5 w-3.5", isWishlisted && "fill-current")} />
         </button>
-
-        {/* Desktop Quick View Overlay */}
-        <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex items-center justify-center pointer-events-none">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              handleOpenQuickView()
-            }}
-            className="pointer-events-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-background/90 text-foreground text-xs font-semibold backdrop-blur-md shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-200 hover:bg-background"
-          >
-            <Eye className="h-3.5 w-3.5" />
-            Quick View
-          </button>
-        </div>
 
         {/* Stock warning pill */}
         {product.stock <= 6 && (
-          <div className="absolute bottom-1.5 left-1.5 sm:bottom-2.5 sm:left-2.5 z-10 bg-black/80 backdrop-blur text-[8px] sm:text-[10px] text-amber-300 px-1.5 py-0.5 rounded font-mono font-medium">
+          <div className="absolute bottom-2 left-2 z-10 bg-[#241A14]/90 backdrop-blur text-[8px] sm:text-[10px] text-amber-300 px-1.5 py-0.5 rounded-md font-mono font-medium border border-amber-500/30">
             🔥 {product.stock} left
           </div>
         )}
       </div>
 
       {/* Product Card Content */}
-      <div className="flex flex-1 flex-col p-2.5 sm:p-4">
+      <div className="flex flex-1 flex-col p-3 sm:p-4 bg-card">
         {/* Category & Rating */}
         <div className="flex items-center justify-between text-[10px] sm:text-xs text-muted-foreground mb-1 gap-1">
-          <span className="uppercase tracking-wider font-mono text-[9px] sm:text-[11px] truncate">
+          <span className="uppercase tracking-wider font-mono text-[9px] sm:text-[10px] font-bold text-[#956E2C] dark:text-amber-400/80 truncate">
             {product.categoryLabel || product.category}
           </span>
           <StarRating rating={product.rating} reviewsCount={product.reviewsCount} size="xs" showScore={false} />
         </div>
 
-        {/* Product Name with shadcn HoverCard */}
+        {/* Product Name with HoverCard */}
         <HoverCard openDelay={250} closeDelay={150}>
           <HoverCardTrigger asChild>
-            <h3 className="font-semibold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-1 leading-snug">
+            <h3 className="font-bold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-1 leading-snug">
               {product.name}
             </h3>
           </HoverCardTrigger>
@@ -164,7 +143,7 @@ function ProductCardComponent({ product }) {
               <img
                 src={product.images[0]}
                 alt={product.name}
-                className="h-12 w-12 rounded-lg object-cover border border-border flex-shrink-0"
+                className="h-12 w-12 rounded-lg object-contain p-1 border border-border flex-shrink-0 bg-muted/30"
               />
               <div className="space-y-1 min-w-0 flex-1">
                 <h4 className="font-bold text-foreground text-xs truncate">{product.name}</h4>
@@ -178,15 +157,17 @@ function ProductCardComponent({ product }) {
           </HoverCardContent>
         </HoverCard>
 
-        {/* Product Tagline (desktop only) */}
-        <p className="text-[11px] text-muted-foreground line-clamp-1 mb-2 hidden sm:block">
-          {product.tagline}
+        {/* Brand & Stock Status */}
+        <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mb-2 truncate">
+          <span>{product.brand || "Meridian"}</span>
+          <span className="opacity-30">•</span>
+          <span className="text-emerald-600 dark:text-emerald-400 font-medium">In Stock</span>
         </p>
 
         {/* Price & Action Row */}
         <div className="mt-auto flex items-center justify-between pt-2 border-t border-border/60 gap-1.5">
           <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-1.5">
-            <span className="text-xs sm:text-base font-bold text-foreground">
+            <span className="text-xs sm:text-base font-extrabold text-foreground font-mono">
               {formatCurrency(product.price)}
             </span>
             {product.originalPrice && (
@@ -199,11 +180,11 @@ function ProductCardComponent({ product }) {
           {quantityInCart > 0 ? (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center border border-primary/30 bg-primary/5 dark:bg-primary/10 rounded-lg sm:rounded-xl overflow-hidden h-7 sm:h-8 flex-shrink-0 shadow-sm transition-all animate-scale-in"
+              className="flex items-center border border-[#D5C7B0] dark:border-primary/30 bg-[#F4EDE0] dark:bg-primary/10 rounded-full overflow-hidden h-7 sm:h-8 flex-shrink-0 shadow-sm transition-all animate-scale-in"
             >
               <button
                 onClick={handleDecrement}
-                className="h-full px-2 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-primary/15 transition-colors active:scale-90"
+                className="h-full px-2 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-[#EAE0CF] dark:hover:bg-primary/15 transition-colors active:scale-90"
                 aria-label={`Decrease quantity of ${product.name}`}
               >
                 <Minus className="h-3 w-3" />
@@ -215,7 +196,7 @@ function ProductCardComponent({ product }) {
                 onClick={handleIncrement}
                 disabled={quantityInCart >= product.stock}
                 className={cn(
-                  "h-full px-2 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-primary/15 transition-colors active:scale-90",
+                  "h-full px-2 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-[#EAE0CF] dark:hover:bg-primary/15 transition-colors active:scale-90",
                   quantityInCart >= product.stock && "opacity-35 cursor-not-allowed hover:bg-transparent"
                 )}
                 aria-label={`Increase quantity of ${product.name}`}
@@ -228,12 +209,12 @@ function ProductCardComponent({ product }) {
               onClick={handleAddToCart}
               disabled={product.stock === 0}
               className={cn(
-                "flex items-center justify-center p-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-xs font-semibold transition-all duration-200 active:scale-95 shadow-sm flex-shrink-0",
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95 shadow-sm flex-shrink-0",
                 product.stock === 0
                   ? "bg-muted text-muted-foreground cursor-not-allowed"
                   : isAddedRecently
                   ? "bg-emerald-600 text-white"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90 border border-amber-500/25 shadow-[0_2px_10px_rgba(30,22,16,0.18)] hover:shadow-[0_4px_14px_rgba(197,160,89,0.3)]"
               )}
               aria-label={`Add ${product.name} to cart`}
             >
@@ -242,12 +223,12 @@ function ProductCardComponent({ product }) {
               ) : isAddedRecently ? (
                 <>
                   <Check className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline sm:ml-1">Added</span>
+                  <span className="hidden sm:inline">Added</span>
                 </>
               ) : (
                 <>
                   <ShoppingBag className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline sm:ml-1">Add</span>
+                  <span>Add to Cart</span>
                 </>
               )}
             </button>
