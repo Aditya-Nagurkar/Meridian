@@ -14,71 +14,6 @@ import {
 } from "../lib/constants"
 import { generateOrderId } from "../lib/utils"
 
-// -------------------------------------------------------------
-// ONE-TIME MIGRATION FROM LEGACY INDIVIDUAL STORAGE KEYS
-// -------------------------------------------------------------
-const migrateLegacyStorage = () => {
-  if (typeof window === "undefined") return
-  try {
-    const existing = window.localStorage.getItem("meridian_store")
-    if (existing) {
-      try {
-        const parsed = JSON.parse(existing)
-        let changed = false
-        // Clean out legacy hardcoded dummy address from persisted user profile
-        if (
-          parsed?.state?.user?.defaultAddress?.street &&
-          parsed.state.user.defaultAddress.street.includes("402, High Street Residences")
-        ) {
-          parsed.state.user.defaultAddress = null
-          changed = true
-        }
-        if (changed) {
-          window.localStorage.setItem("meridian_store", JSON.stringify(parsed))
-        }
-      } catch {
-        // Ignore parse error
-      }
-    } else {
-      const cart = JSON.parse(window.localStorage.getItem("meridian_cart") || "[]")
-      const orders = JSON.parse(window.localStorage.getItem("meridian_orders") || "[]")
-      const wishlist = JSON.parse(window.localStorage.getItem("meridian_wishlist") || "[]")
-      const user = JSON.parse(window.localStorage.getItem("meridian_auth") || "null")
-
-      if (
-        (Array.isArray(cart) && cart.length > 0) ||
-        (Array.isArray(orders) && orders.length > 0) ||
-        (Array.isArray(wishlist) && wishlist.length > 0) ||
-        user
-      ) {
-        window.localStorage.setItem(
-          "meridian_store",
-          JSON.stringify({
-            state: {
-              cart: Array.isArray(cart) ? cart : [],
-              orders: Array.isArray(orders) ? orders : [],
-              wishlist: Array.isArray(wishlist) ? wishlist : [],
-              user: user && typeof user === "object" ? user : null,
-            },
-            version: 1,
-          })
-        )
-      }
-    }
-    // Clean up legacy separate localStorage keys to keep storage lean
-    window.localStorage.removeItem("meridian_cart")
-    window.localStorage.removeItem("meridian_orders")
-    window.localStorage.removeItem("meridian_wishlist")
-    window.localStorage.removeItem("meridian_auth")
-    window.localStorage.removeItem("meridian_storage_v2")
-    window.sessionStorage.removeItem("meridian_orders")
-  } catch {
-    // Ignore migration cleanup errors
-  }
-}
-
-migrateLegacyStorage()
-
 const INITIAL_FILTERS = {
   category: "all",
   searchQuery: "",
@@ -143,6 +78,30 @@ export const useStore = create(
       orders: [],
       wishlist: [],
       user: null,
+      theme: typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+
+      toggleTheme: () => {
+        const nextTheme = get().theme === "dark" ? "light" : "dark"
+        set({ theme: nextTheme })
+        if (typeof document !== "undefined") {
+          if (nextTheme === "dark") {
+            document.documentElement.classList.add("dark")
+          } else {
+            document.documentElement.classList.remove("dark")
+          }
+        }
+      },
+
+      setTheme: (newTheme) => {
+        set({ theme: newTheme })
+        if (typeof document !== "undefined") {
+          if (newTheme === "dark") {
+            document.documentElement.classList.add("dark")
+          } else {
+            document.documentElement.classList.remove("dark")
+          }
+        }
+      },
 
       // -------------------------------------------------------------
       // 4. TRANSIENT / IN-MEMORY STATE (Not persisted to localStorage)
@@ -587,7 +546,23 @@ export const useStore = create(
         orders: state.orders,
         wishlist: state.wishlist,
         user: state.user,
+        theme: state.theme,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return
+        // Scrub legacy dummy address if present
+        if (state.user?.defaultAddress?.street?.includes("402, High Street Residences")) {
+          state.user.defaultAddress = null
+        }
+        // Apply theme to document root element upon hydration
+        if (typeof document !== "undefined" && state.theme) {
+          if (state.theme === "dark") {
+            document.documentElement.classList.add("dark")
+          } else {
+            document.documentElement.classList.remove("dark")
+          }
+        }
+      },
     }
   )
 )

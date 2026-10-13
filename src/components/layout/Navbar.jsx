@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from "react"
 import { Search, ShoppingBag, Heart, Sun, Moon, X, Sparkles } from "lucide-react"
 import { useStore } from "../../context/StoreContext"
-import { useTheme } from "../../context/ThemeContext"
 import { CATEGORIES } from "../../lib/constants"
 import { formatCurrency, cn } from "../../lib/utils"
 import { UserMenu } from "../auth/UserMenu"
@@ -16,8 +15,9 @@ export function Navbar({ onOpenFilterMobile }) {
     filters,
     updateFilter,
     resetFilters,
+    theme,
+    toggleTheme,
   } = useStore()
-  const { theme, toggleTheme } = useTheme()
   const searchInputRef = useRef(null)
 
   // Keyboard shortcut listener: pressing '/' focuses the search bar

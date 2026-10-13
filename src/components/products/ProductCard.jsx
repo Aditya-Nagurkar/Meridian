@@ -165,13 +165,13 @@ function ProductCardComponent({ product }) {
         </p>
 
         {/* Price & Action Row */}
-        <div className="mt-auto flex items-center justify-between pt-2 border-t border-border/60 gap-1.5">
-          <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-1.5">
-            <span className="text-xs sm:text-base font-extrabold text-foreground font-mono">
+        <div className="mt-auto flex flex-wrap items-center justify-between pt-2 border-t border-border/60 gap-y-1.5 gap-x-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-1.5 min-w-0 flex-shrink">
+            <span className="text-xs sm:text-base font-extrabold text-foreground font-mono truncate">
               {formatCurrency(product.price)}
             </span>
             {product.originalPrice && (
-              <span className="text-[9px] sm:text-xs text-muted-foreground line-through">
+              <span className="text-[9px] sm:text-xs text-muted-foreground line-through truncate font-mono">
                 {formatCurrency(product.originalPrice)}
               </span>
             )}
@@ -180,23 +180,23 @@ function ProductCardComponent({ product }) {
           {quantityInCart > 0 ? (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center border border-[#D5C7B0] dark:border-primary/30 bg-[#F4EDE0] dark:bg-primary/10 rounded-full overflow-hidden h-7 sm:h-8 flex-shrink-0 shadow-sm transition-all animate-scale-in"
+              className="flex items-center border border-[#D5C7B0] dark:border-primary/30 bg-[#F4EDE0] dark:bg-primary/10 rounded-full overflow-hidden h-7 sm:h-8 flex-shrink-0 shadow-sm transition-all animate-scale-in ml-auto sm:ml-0"
             >
               <button
                 onClick={handleDecrement}
-                className="h-full px-2 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-[#EAE0CF] dark:hover:bg-primary/15 transition-colors active:scale-90"
+                className="h-full px-1.5 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-[#EAE0CF] dark:hover:bg-primary/15 transition-colors active:scale-90"
                 aria-label={`Decrease quantity of ${product.name}`}
               >
                 <Minus className="h-3 w-3" />
               </button>
-              <span className="min-w-[1.25rem] sm:min-w-[1.5rem] text-center text-xs font-bold font-mono text-primary px-0.5 select-none">
+              <span className="min-w-[1.1rem] sm:min-w-[1.5rem] text-center text-xs font-bold font-mono text-primary px-0.5 select-none">
                 {quantityInCart}
               </span>
               <button
                 onClick={handleIncrement}
                 disabled={quantityInCart >= product.stock}
                 className={cn(
-                  "h-full px-2 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-[#EAE0CF] dark:hover:bg-primary/15 transition-colors active:scale-90",
+                  "h-full px-1.5 sm:px-2.5 flex items-center justify-center text-foreground hover:bg-[#EAE0CF] dark:hover:bg-primary/15 transition-colors active:scale-90",
                   quantityInCart >= product.stock && "opacity-35 cursor-not-allowed hover:bg-transparent"
                 )}
                 aria-label={`Increase quantity of ${product.name}`}
@@ -209,7 +209,7 @@ function ProductCardComponent({ product }) {
               onClick={handleAddToCart}
               disabled={product.stock === 0}
               className={cn(
-                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95 shadow-sm flex-shrink-0",
+                "flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95 shadow-sm flex-shrink-0 ml-auto sm:ml-0",
                 product.stock === 0
                   ? "bg-muted text-muted-foreground cursor-not-allowed"
                   : isAddedRecently
@@ -219,7 +219,9 @@ function ProductCardComponent({ product }) {
               aria-label={`Add ${product.name} to cart`}
             >
               {product.stock === 0 ? (
-                <span className="text-[10px] sm:text-xs">Out of Stock</span>
+                <span className="text-[10px] sm:text-xs whitespace-nowrap">
+                  <span className="hidden sm:inline">Out of </span>Stock
+                </span>
               ) : isAddedRecently ? (
                 <>
                   <Check className="h-3.5 w-3.5" />
@@ -227,8 +229,10 @@ function ProductCardComponent({ product }) {
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="h-3.5 w-3.5" />
-                  <span>Add to Cart</span>
+                  <ShoppingBag className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span>
+                    Add<span className="hidden sm:inline"> to Cart</span>
+                  </span>
                 </>
               )}
             </button>

@@ -104,6 +104,11 @@ export function useStore() {
     addToast: store.addToast,
     removeToast: store.removeToast,
 
+    // Theme (managed purely by Zustand persist)
+    theme: store.theme,
+    toggleTheme: store.toggleTheme,
+    setTheme: store.setTheme,
+
     // Orders
     orders: Array.isArray(store.orders) ? store.orders : [],
     completeOrder: (orderDetails) => store.createOrder(orderDetails),

@@ -1,7 +1,6 @@
 import React, { useMemo, useRef, useDeferredValue, useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import { StoreProvider, useStore } from "./context/StoreContext"
-import { ThemeProvider } from "./context/ThemeContext"
 import { AnnouncementBar } from "./components/layout/AnnouncementBar"
 import { Navbar } from "./components/layout/Navbar"
 import { Hero } from "./components/layout/Hero"
@@ -157,10 +156,8 @@ function StoreContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <StoreProvider>
-        <StoreContent />
-      </StoreProvider>
-    </ThemeProvider>
+    <StoreProvider>
+      <StoreContent />
+    </StoreProvider>
   )
 }
